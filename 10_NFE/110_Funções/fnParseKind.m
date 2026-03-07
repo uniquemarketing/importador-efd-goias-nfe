@@ -67,6 +67,14 @@
                     null
                 else
                     Number.Round(n, scale, RoundingMode.AwayFromZero),
+        fnToCurrency = (txt as nullable text, scale as number) as nullable number =>
+            let
+                n = fnParseScaledNumber(txt, scale)
+            in
+                if n = null then
+                    null
+                else
+                    Currency.From(n),
         fnTryScaleFromKind = (kk as text) as nullable number =>
             let
                 hasV = Text.Contains(kk, "v"),
@@ -92,37 +100,61 @@
                     onlyDigits = Text.Select(txt, {"0".."9"}), padded = Text.PadStart(onlyDigits, len, "0")
                 in
                     padded,
-        out =
-            if t = null then
-                null
-            else if k = "text" then
-                t
-            else if k = "int" then
-                fnToInt64(t)
-            else if k = "number" then
-                fnToNumber(t)
-            else if k = "datetime" then
-                fnToDateTime(t)
-            else if k = "date" then
-                fnToDate(t)
-            else if k = "logical" then
-                fnToLogical(t)
-            else if Text.StartsWith(k, "code") then
+        ContratoFixo = [
+            text = [Type = type text, Parse = (txt as nullable text) as any => txt],
+            int = [Type = Int64.Type, Parse = (txt as nullable text) as any => fnToInt64(txt)],
+            number = [Type = type number, Parse = (txt as nullable text) as any => fnToNumber(txt)],
+            datetime = [Type = type datetime, Parse = (txt as nullable text) as any => fnToDateTime(txt)],
+            date = [Type = type date, Parse = (txt as nullable text) as any => fnToDate(txt)],
+            logical = [Type = type logical, Parse = (txt as nullable text) as any => fnToLogical(txt)],
+            #"13v2" = [Type = Currency.Type, Parse = (txt as nullable text) as any => fnToCurrency(txt, 2)],
+            #"3v2-4" = [Type = type number, Parse = (txt as nullable text) as any => fnParseScaledNumber(txt, 4)],
+            #"11v0-4" = [Type = type number, Parse = (txt as nullable text) as any => fnParseScaledNumber(txt, 4)],
+            #"11v0-10" = [Type = type number, Parse = (txt as nullable text) as any => fnParseScaledNumber(txt, 10)],
+            #"11v4" = [Type = type number, Parse = (txt as nullable text) as any => fnParseScaledNumber(txt, 4)]
+        ],
+        fnContratoCode = (kk as text) as nullable record =>
+            if Text.StartsWith(kk, "code") then
                 let
-                    lenTxt = Text.AfterDelimiter(k, "code"),
+                    lenTxt = Text.AfterDelimiter(kk, "code"),
                     len = try Number.FromText(lenTxt, "en-US") otherwise null
                 in
                     if len = null then
-                        t
+                        null
                     else
-                        fnToCode(t, Int64.From(len))
+                        [Type = type text, Parse = (txt as nullable text) as any => fnToCode(txt, Int64.From(len))]
             else
-                let
-                    sc = fnTryScaleFromKind(k)
-                in
-                    if sc <> null then
-                        fnParseScaledNumber(t, sc)
-                    else
-                        t
+                null,
+        fnContratoDecimal = (kk as text) as nullable record =>
+            let
+                scale = fnTryScaleFromKind(kk)
+            in
+                if scale = null then
+                    null
+                else
+                    [
+                        Type = type number,
+                        Parse = (txt as nullable text) as any => fnParseScaledNumber(txt, Number.From(scale))
+                    ],
+        fnGetContrato = (kk as text) as nullable record =>
+            let
+                fixo = try Record.Field(ContratoFixo, kk) otherwise null,
+                code = if fixo <> null then null else fnContratoCode(kk),
+                decimal = if fixo <> null or code <> null then null else fnContratoDecimal(kk)
+            in
+                if fixo <> null then
+                    fixo
+                else if code <> null then
+                    code
+                else
+                    decimal,
+        contratoKind = fnGetContrato(k),
+        out =
+            if t = null then
+                null
+            else if contratoKind = null then
+                t
+            else
+                try contratoKind[Parse](t) otherwise null
     in
         out
