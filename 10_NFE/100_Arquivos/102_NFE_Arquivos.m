@@ -42,7 +42,13 @@ let
         in
             dt,
     Filtra = Table.SelectRows(Fonte, each (try [TipoArquivo] otherwise null) = "NFe"),
-    AddDhEmi = Table.AddColumn(Filtra, "dhEmi", each fnDataEmitNfeFromXmlTable([XmlTable]), type datetime),
+    AddXmlTable = Table.AddColumn(
+        Filtra,
+        "XmlTable",
+        each try Xml.Tables(File.Contents([FullPath])) otherwise #table({}, {}),
+        type table
+    ),
+    AddDhEmi = Table.AddColumn(AddXmlTable, "dhEmi", each fnDataEmitNfeFromXmlTable([XmlTable]), type datetime),
     // Ordenação fiscal: mais antiga primeiro
     Sort = Table.Sort(AddDhEmi, {{"dhEmi", Order.Ascending}, {"FullPath", Order.Ascending}}),
     // PK técnica cronológica

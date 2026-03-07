@@ -1,28 +1,24 @@
 let
     // ============================================================
-    // xml_Arquivos_All (enxuto, mas COM XmlTable)
+    // xml_Arquivos_All (enxuto e sem parse completo de XML)
     // Saída:
-    //   PastaTipo, PastaPath, Name, FullPath, TipoArquivo, XmlTable
+    //   PastaTipo, Name, FullPath, TipoArquivo
     // ============================================================
     // Helper
-    fnTipoFromXmlTable = (xmlTable as table) as text =>
+    fnTipoFromPath = (fullPath as text) as text =>
         let
-            // Se tabela vazia → desconhecido
+            bin = try File.Contents(fullPath) otherwise null,
+            headBin = if bin = null then null else try Binary.Range(bin, 0, 65536) otherwise null,
+            headTxtUtf8 = if headBin = null then null else try Text.FromBinary(headBin, TextEncoding.Utf8) otherwise null,
+            headTxtAnsi = if headTxtUtf8 = null and headBin <> null then try Text.FromBinary(headBin, 1252) otherwise null else headTxtUtf8,
+            s = Text.Lower(if headTxtAnsi = null then "" else headTxtAnsi),
             Tipo =
-                if xmlTable = null or Table.IsEmpty(xmlTable) then
-                    "Desconhecido"
+                if Text.Contains(s, "<nfeproc") or Text.Contains(s, "<nfe ") or Text.Contains(s, "<nfe>") then
+                    "NFe"
+                else if Text.Contains(s, "<proceventonfe") or Text.Contains(s, "<evento") then
+                    "Evento"
                 else
-                    let
-                        cols = Table.ColumnNames(xmlTable),
-                        HasNFe = List.Contains(List.Transform(cols, each Text.Lower(_)), "nfe"),
-                        HasEvento = List.Contains(List.Transform(cols, each Text.Lower(_)), "evento")
-                    in
-                        if HasNFe then
-                            "NFe"
-                        else if HasEvento then
-                            "Evento"
-                        else
-                            "Desconhecido"
+                    "Desconhecido"
         in
             Tipo,
     Cfg = Config,
@@ -54,19 +50,7 @@ let
     ExpandFiles = Table.ExpandTableColumn(AddFiles, "Files", {"Name"}, {"Name"}),
     // FullPath baseado no PastaPath (contrato do sistema)
     AddFullPath = Table.AddColumn(ExpandFiles, "FullPath", each Text.From([PastaPath]) & Text.From([Name]), type text),
-    // XmlTable (mantido por requisito)
-    AddXmlTable = Table.AddColumn(
-        AddFullPath,
-        "XmlTable",
-        each
-            let
-                bin = try Binary.Buffer(File.Contents([FullPath])) otherwise null,
-                xt = try if bin = null then #table({}, {}) else Xml.Tables(bin) otherwise #table({}, {})
-            in
-                xt,
-        type table
-    ),
-    AddTipo = Table.AddColumn(AddXmlTable, "TipoArquivo", each fnTipoFromXmlTable([XmlTable]), type text),
-    Final = Table.SelectColumns(AddTipo, {"PastaTipo", "Name", "FullPath", "TipoArquivo", "XmlTable"})
+    AddTipo = Table.AddColumn(AddFullPath, "TipoArquivo", each fnTipoFromPath([FullPath]), type text),
+    Final = Table.SelectColumns(AddTipo, {"PastaTipo", "Name", "FullPath", "TipoArquivo"})
 in
     Final
