@@ -7,6 +7,15 @@ let
     DerivadosBase = Record.FieldOrDefault(ContratoBase, "Derivados", {}),
     TodasColunas = List.Transform(CamposBase, each _[Alias]) & List.Transform(DerivadosBase, each _[Name]),
     Expandir = Table.ExpandTableColumn(AddTabelaNF, "ConteudoProcessado", TodasColunas),
-    SemDuplicadas = Table.Distinct(Expandir, {"Chave de Acesso"})
+    SemDuplicadas = Table.Distinct(Expandir, {"Chave de Acesso"}),
+    RegrasTipo = List.Transform(
+        CamposBase & DerivadosBase,
+        each
+            {
+                if _[Alias]? <> null then _[Alias] else _[Name],
+                try fnParseKind(null, _[Kind], "type") otherwise type any
+            }
+    ),
+    TabelaTipada = if List.IsEmpty(RegrasTipo) then SemDuplicadas else Table.TransformColumnTypes(SemDuplicadas, RegrasTipo)
 in
-    SemDuplicadas
+    TabelaTipada

@@ -1,5 +1,6 @@
-(v as any, kind as text) as any =>
+(v as any, kind as text, optional mode as nullable text) as any =>
     let
+        m = Text.Lower(Text.Trim(if mode = null then "parse" else mode)),
         k = Text.Lower(Text.Trim(kind)),
         t0 = if v = null then null else Text.Trim(Text.From(v)),
         t = if t0 = "" then null else t0,
@@ -150,7 +151,9 @@
                     decimal,
         contratoKind = fnGetContrato(k),
         out =
-            if t = null then
+            if m = "type" then
+                if contratoKind = null then type any else contratoKind[Type]
+            else if t = null then
                 null
             else if contratoKind = null then
                 t

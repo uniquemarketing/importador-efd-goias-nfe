@@ -16,8 +16,30 @@ let
     ),
     // Expande garantindo que todas as colunas existam na tabela final
     Expandir = Table.ExpandTableColumn(AddTabelaNF, "ConteudoProcessado", ColunasParaExpandir),
-    // A tipagem já vem pronta de dentro da fnNFeProcessarXmlTable
-    TabelaTipada = Expandir,
+    RegrasTipo = List.Distinct(
+        List.Combine(
+            {
+                List.Transform(
+                    CamposProd & DerivadosProd,
+                    each
+                        {
+                            if _[Alias]? <> null then _[Alias] else _[Name],
+                            try fnParseKind(null, _[Kind], "type") otherwise type any
+                        }
+                ),
+                List.Transform(
+                    CamposICMS,
+                    each
+                        {
+                            _[Alias],
+                            try fnParseKind(null, _[Kind], "type") otherwise type any
+                        }
+                ),
+                {{"Tag de Origem ICMS", fnParseKind(null, "text", "type")}}
+            }
+        )
+    ),
+    TabelaTipada = if List.IsEmpty(RegrasTipo) then Expandir else Table.TransformColumnTypes(Expandir, RegrasTipo),
     // Chave única para o relacionamento
     ID_Produto = Table.AddColumn(
         TabelaTipada, "ID_Produto", each [Chave de Acesso] & "_" & Text.From([Item]), type text
