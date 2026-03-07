@@ -1,9 +1,9 @@
 let
     source = #"NFE_Processado_Base",
-    ContratoProd = NFE_Contrato_Ativo_PROD,
-    CamposProd = ContratoProd[Fields],
-    DerivadosProd = Record.FieldOrDefault(ContratoProd, "Derivados", {}),
-    CamposICMS = ContratoProd[ICMS_Layout],
+    LayoutProd = LAYOUT_NFE_PROD,
+    CamposProd = LayoutProd[Fields],
+    DerivadosProd = Record.FieldOrDefault(LayoutProd, "Derivados", {}),
+    CamposICMS = LayoutProd[ICMS_Layout],
     // Monta a lista de nomes que o Power Pivot espera ver
     ColunasParaExpandir = List.Distinct(
         {"Chave de Acesso"}

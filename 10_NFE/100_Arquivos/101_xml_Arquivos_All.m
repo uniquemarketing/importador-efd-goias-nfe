@@ -8,7 +8,7 @@ let
     fnTipoFromPath = (fullPath as text) as text =>
         let
             bin = try File.Contents(fullPath) otherwise null,
-            headBin = if bin = null then null else try Binary.Range(bin, 0, 65536) otherwise null,
+            headBin = if bin = null then null else try Binary.Range(bin, 0, 16384) otherwise null,
             headTxtUtf8 = if headBin = null then null else try Text.FromBinary(headBin, TextEncoding.Utf8) otherwise null,
             headTxtAnsi = if headTxtUtf8 = null and headBin <> null then try Text.FromBinary(headBin, 1252) otherwise null else headTxtUtf8,
             s = Text.Lower(if headTxtAnsi = null then "" else headTxtAnsi),

@@ -1,11 +1,18 @@
 let
     source = #"102_NFE_Arquivos",
-    ContratoBase = NFE_Contrato_Ativo_BASE,
-    CamposBase = ContratoBase[Fields],
-    DerivadosBase = Record.FieldOrDefault(ContratoBase, "Derivados", {}),
+    LayoutBase = LAYOUT_NFE_BASE,
+    CamposBase = LayoutBase[Fields],
+    DerivadosBase = Record.FieldOrDefault(LayoutBase, "Derivados", {}),
     TodasColunas = List.Transform(CamposBase, each _[Alias]) & List.Transform(DerivadosBase, each _[Name]),
     AddConteudoBase = Table.AddColumn(
-        source, "ConteudoBase", each fnNFeProcessarTotaisXmlTable([XmlTable], ContratoBase), type record
+        source,
+        "ConteudoBase",
+        each
+            fnNFeProcessarTotaisXmlTable(
+                try Xml.Tables(File.Contents([FullPath])) otherwise #table({}, {}),
+                LayoutBase
+            ),
+        type record
     ),
     Expandir = Table.ExpandRecordColumn(AddConteudoBase, "ConteudoBase", TodasColunas, TodasColunas),
     SemDuplicadas = Table.Distinct(Expandir, {"Chave de Acesso"}),
