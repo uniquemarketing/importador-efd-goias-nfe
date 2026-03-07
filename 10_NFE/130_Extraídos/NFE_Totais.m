@@ -1,12 +1,10 @@
 let
-    source = #"102_NFE_Arquivos",
-    // Sua consulta que lista os arquivos da pasta
-    AddTabelaNF = Table.AddColumn(source, "ConteudoProcessado", each fnNFeProcessarXmlTable([XmlTable])),
+    source = #"NFE_Processado_Base",
     ContratoBase = NFE_Contrato_Ativo_BASE,
     CamposBase = ContratoBase[Fields],
     DerivadosBase = Record.FieldOrDefault(ContratoBase, "Derivados", {}),
     TodasColunas = List.Transform(CamposBase, each _[Alias]) & List.Transform(DerivadosBase, each _[Name]),
-    Expandir = Table.ExpandTableColumn(AddTabelaNF, "ConteudoProcessado", TodasColunas),
+    Expandir = Table.ExpandTableColumn(source, "ConteudoProcessado", TodasColunas),
     SemDuplicadas = Table.Distinct(Expandir, {"Chave de Acesso"}),
     RegrasTipo = List.Transform(
         CamposBase & DerivadosBase,

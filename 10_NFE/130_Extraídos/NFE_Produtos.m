@@ -1,7 +1,5 @@
 let
-    source = #"102_NFE_Arquivos",
-    // Processa os XMLs usando o Layout fixo e a função de processamento
-    AddTabelaNF = Table.AddColumn(source, "ConteudoProcessado", each fnNFeProcessarXmlTable([XmlTable])),
+    source = #"NFE_Processado_Base",
     ContratoProd = NFE_Contrato_Ativo_PROD,
     CamposProd = ContratoProd[Fields],
     DerivadosProd = Record.FieldOrDefault(ContratoProd, "Derivados", {}),
@@ -15,7 +13,7 @@ let
             & {"Tag de Origem ICMS"}
     ),
     // Expande garantindo que todas as colunas existam na tabela final
-    Expandir = Table.ExpandTableColumn(AddTabelaNF, "ConteudoProcessado", ColunasParaExpandir),
+    Expandir = Table.ExpandTableColumn(source, "ConteudoProcessado", ColunasParaExpandir),
     RegrasTipo = List.Distinct(
         List.Combine(
             {

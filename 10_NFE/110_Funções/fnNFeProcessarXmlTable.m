@@ -58,12 +58,12 @@
                 TabelaItensNode
             else
                 Table.FromRecords({TabelaItensNode}),
+        LayoutProdAdaptado = Record.Combine({LAYOUT_NFE_PROD, [RootPath = {}, Multiplicidade = "1:1"]}),
         ProcessarLinhas = Table.AddColumn(
             TabelaItens,
             "DadosFinal",
             (linhaAtual) =>
                 let
-                    LayoutProdAdaptado = Record.Combine({LAYOUT_NFE_PROD, [RootPath = {}, Multiplicidade = "1:1"]}),
                     ProdData = fnProcessarLayout(LayoutProdAdaptado, linhaAtual),
                     // ICMS Dinâmico e Blindado
                     impostoNode = fnGetNestedValue(linhaAtual, {"imposto", "ICMS"}),
