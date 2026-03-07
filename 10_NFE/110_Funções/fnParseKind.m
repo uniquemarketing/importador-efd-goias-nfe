@@ -67,6 +67,14 @@
                     null
                 else
                     Number.Round(n, scale, RoundingMode.AwayFromZero),
+        fnToCurrency = (txt as nullable text, scale as number) as nullable number =>
+            let
+                n = fnParseScaledNumber(txt, scale)
+            in
+                if n = null then
+                    null
+                else
+                    Currency.From(n),
         fnTryScaleFromKind = (kk as text) as nullable number =>
             let
                 hasV = Text.Contains(kk, "v"),
@@ -98,7 +106,12 @@
             number = [Type = type number, Parse = (txt as nullable text) as any => fnToNumber(txt)],
             datetime = [Type = type datetime, Parse = (txt as nullable text) as any => fnToDateTime(txt)],
             date = [Type = type date, Parse = (txt as nullable text) as any => fnToDate(txt)],
-            logical = [Type = type logical, Parse = (txt as nullable text) as any => fnToLogical(txt)]
+            logical = [Type = type logical, Parse = (txt as nullable text) as any => fnToLogical(txt)],
+            #"13v2" = [Type = Currency.Type, Parse = (txt as nullable text) as any => fnToCurrency(txt, 2)],
+            #"3v2-4" = [Type = type number, Parse = (txt as nullable text) as any => fnParseScaledNumber(txt, 4)],
+            #"11v0-4" = [Type = type number, Parse = (txt as nullable text) as any => fnParseScaledNumber(txt, 4)],
+            #"11v0-10" = [Type = type number, Parse = (txt as nullable text) as any => fnParseScaledNumber(txt, 10)],
+            #"11v4" = [Type = type number, Parse = (txt as nullable text) as any => fnParseScaledNumber(txt, 4)]
         ],
         fnContratoCode = (kk as text) as nullable record =>
             if Text.StartsWith(kk, "code") then
