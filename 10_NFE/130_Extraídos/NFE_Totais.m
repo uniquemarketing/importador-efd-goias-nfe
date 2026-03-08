@@ -1,20 +1,10 @@
 let
-    source = #"102_NFE_Arquivos",
+    source = #"NFE_Processado_Base",
     LayoutBase = LAYOUT_NFE_BASE,
     CamposBase = LayoutBase[Fields],
     DerivadosBase = Record.FieldOrDefault(LayoutBase, "Derivados", {}),
     TodasColunas = List.Transform(CamposBase, each _[Alias]) & List.Transform(DerivadosBase, each _[Name]),
-    AddConteudoBase = Table.AddColumn(
-        source,
-        "ConteudoBase",
-        each
-            fnNFeProcessarTotaisXmlTable(
-                try Xml.Tables(File.Contents([FullPath])) otherwise #table({}, {}),
-                LayoutBase
-            ),
-        type record
-    ),
-    Expandir = Table.ExpandRecordColumn(AddConteudoBase, "ConteudoBase", TodasColunas, TodasColunas),
+    Expandir = Table.ExpandRecordColumn(source, "ConteudoBase", TodasColunas, TodasColunas),
     SemDuplicadas = Table.Distinct(Expandir, {"Chave de Acesso"}),
     RegrasTipo = List.Transform(
         CamposBase & DerivadosBase,

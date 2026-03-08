@@ -1,12 +1,25 @@
 let
     Source = #"102_NFE_Arquivos",
     Base = Table.SelectColumns(Source, {"PastaTipo", "Name", "FullPath", "TipoArquivo", "dhEmi", "nfe_id"}),
-    AddConteudoProcessado = Table.AddColumn(
+    LayoutBase = LAYOUT_NFE_BASE,
+    AddXmlTable = Table.AddColumn(
         Base,
-        "ConteudoProcessado",
-        each fnNFeProcessarXmlTable(try Xml.Tables(File.Contents([FullPath])) otherwise #table({}, {})),
+        "XmlTable",
+        each try Xml.Tables(File.Contents([FullPath])) otherwise #table({}, {}),
         type table
     ),
-    Resultado = AddConteudoProcessado
+    AddConteudoBase = Table.AddColumn(
+        AddXmlTable,
+        "ConteudoBase",
+        each fnNFeProcessarTotaisXmlTable([XmlTable], LayoutBase),
+        type record
+    ),
+    AddConteudoProcessado = Table.AddColumn(
+        AddConteudoBase,
+        "ConteudoProcessado",
+        each fnNFeProcessarXmlTable([XmlTable]),
+        type table
+    ),
+    Resultado = Table.RemoveColumns(AddConteudoProcessado, {"XmlTable"})
 in
     Resultado

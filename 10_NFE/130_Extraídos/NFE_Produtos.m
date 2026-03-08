@@ -38,9 +38,9 @@ let
         )
     ),
     TabelaTipada = if List.IsEmpty(RegrasTipo) then Expandir else Table.TransformColumnTypes(Expandir, RegrasTipo),
-    // Chave única para o relacionamento
+    // Chave primária técnica por item da nota
     ID_Produto = Table.AddColumn(
-        TabelaTipada, "ID_Produto", each [Chave de Acesso] & "_" & Text.From([Item]), type text
+        TabelaTipada, "ID_Produto", each Text.From([nfe_id]) & "_" & Text.From([Item]), type text
     )
 in
     ID_Produto
