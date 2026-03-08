@@ -1,0 +1,997 @@
+# Configuração Global de Tipagem (Link com fnParseKind.m)
+Config:
+  Delimitador: '|'
+  Encoding: 'UTF-8'
+  Versao_Leiaute: '018'
+
+Blocos:
+  # --- BLOCO 0: ABERTURA, IDENTIFICAÇÃO E REFERÊNCIAS ---
+  Bloco_0:
+    Registros:
+      - Registro: '0002'
+        Descricao: 'Classificação do estabelecimento'
+        Campos:
+          - {
+              Pos: 2,
+              Tag: 'CLAS_ESTAB',
+              Tipo: 'code2',
+              Desc: 'Classificação do estabelecimento',
+            }
+        Derivados:
+          - {
+              Name: 'CLAS_ESTAB_DESC',
+              Kind: 'text',
+              Fn: "switch(CLAS_ESTAB) { '01': 'Industrial', '02': 'Atacadista', '03': 'Varejista' }",
+            }
+
+      - Registro: '0221'
+        Descricao: 'Correlação de Unidades de Medida'
+        Campos:
+          - {
+              Pos: 2,
+              Tag: 'COD_ITEM_ORI',
+              Tipo: 'text',
+              Desc: 'Código do item original',
+            }
+          - {
+              Pos: 3,
+              Tag: 'UNID_ORI',
+              Tipo: 'text',
+              Desc: 'Unidade de medida original',
+            }
+          - {
+              Pos: 4,
+              Tag: 'QTD_ORI',
+              Tipo: 'number',
+              Desc: 'Quantidade na unidade original',
+            }
+          # --- REGISTRO 0300: CADASTRO DE BENS ---
+      - Registro: '0300'
+        Descricao: 'Identificação do Bem (Ativo Imobilizado)'
+        Ativo: true
+        Campos:
+          - { Pos: 1, Tag: 'REG', Tipo: 'text', Desc: "Texto fixo '0300'" }
+          - {
+              Pos: 2,
+              Tag: 'COD_IND_BEM',
+              Tipo: 'code1',
+              Desc: 'Indicador do bem',
+            }
+          - {
+              Pos: 3,
+              Tag: 'IDENT_MERC',
+              Tipo: 'code1',
+              Desc: 'Identificação da mercadoria',
+            }
+          - {
+              Pos: 4,
+              Tag: 'DESCR_ITEM',
+              Tipo: 'text',
+              Desc: 'Descrição do bem',
+            }
+          - {
+              Pos: 5,
+              Tag: 'COD_PRNC',
+              Tipo: 'text',
+              Desc: 'Código do bem principal',
+            }
+          - {
+              Pos: 6,
+              Tag: 'COD_CTA',
+              Tipo: 'text',
+              Desc: 'Código da conta contábil',
+            }
+          - { Pos: 7, Tag: 'NR_PARC', Tipo: 'int', Desc: 'Número de parcelas' }
+        Derivados:
+          - Name: 'Tipo_Bem_Desc'
+            Kind: 'text'
+            Fn: "(r) => if r[Cod. Indicador Bem] = '1' then 'Bem' else 'Componente'"
+          - Name: 'Identificacao_Bem_Desc'
+            Kind: 'text'
+            Fn: "(r) => let v = r[Identificação Bem] in if v = '1' then 'Máquinas' else if v = '2' then 'Equipamentos' else if v = '3' then 'Ferramentas' else 'Outros'"
+
+      # --- REGISTRO 0305: UTILIZAÇÃO DO BEM ---
+      - Registro: '0305'
+        Descricao: 'Informações sobre a Utilização do Bem'
+        Ativo: true
+        Campos:
+          - { Pos: 1, Tag: 'REG', Tipo: 'text', Desc: '0305' }
+          - { Pos: 2, Tag: 'COD_CCUS', Tipo: 'text', Desc: 'Centro de Custo' }
+          - { Pos: 3, Tag: 'FUNC_BEM', Tipo: 'text', Desc: 'Função do bem' }
+          - {
+              Pos: 4,
+              Tag: 'VIDA_UTIL',
+              Tipo: 'int',
+              Desc: 'Vida útil restante (meses)',
+            }
+
+      # --- REGISTRO 0400: NATUREZA DA OPERAÇÃO ---
+      - Registro: '0400'
+        Descricao: 'Tabela de Natureza da Operação/Prestação'
+        Ativo: true
+        Campos:
+          - { Pos: 1, Tag: 'REG', Tipo: 'text', Desc: '0400' }
+          - { Pos: 2, Tag: 'COD_NAT', Tipo: 'text', Desc: 'Código da natureza' }
+          - {
+              Pos: 3,
+              Tag: 'DESCR_NAT',
+              Tipo: 'text',
+              Desc: 'Descrição da natureza',
+            }
+
+      # --- REGISTRO 0450: INFORMAÇÃO COMPLEMENTAR ---
+      - Registro: '0450'
+        Descricao: 'Tabela de Informação Complementar'
+        Ativo: true
+        Campos:
+          - { Pos: 1, Tag: 'REG', Tipo: 'text', Desc: '0450' }
+          - { Pos: 2, Tag: 'COD_INF', Tipo: 'text', Desc: 'Código da info' }
+          - { Pos: 3, Tag: 'TXT', Tipo: 'text', Desc: 'Texto da informação' }
+
+      # --- REGISTRO 0460: OBSERVAÇÕES FISCAIS ---
+      - Registro: '0460'
+        Descricao: 'Tabela de Observações do Lançamento Fiscal'
+        Ativo: true
+        Campos:
+          - { Pos: 1, Tag: 'REG', Tipo: 'text', Desc: '0460' }
+          - {
+              Pos: 2,
+              Tag: 'COD_OBS',
+              Tipo: 'text',
+              Desc: 'Código da observação',
+            }
+          - { Pos: 3, Tag: 'TXT', Tipo: 'text', Desc: 'Texto da observação' }
+
+  # --- BLOCO C: DOCUMENTOS FISCAIS I (MERCADORIAS) ---
+  Bloco_C:
+    Registros:
+      - Registro: 'C001'
+  Descricao: 'Abertura do Bloco C'
+  Ativo: true
+  Campos:
+    - { Pos: 2, Tag: 'IND_MOV', Tipo: 'code1', Desc: 'Indicador de movimento' }
+  Derivados:
+    - Name: 'IND_MOV_DESC'
+      Kind: 'text'
+      Fn: "(r) => if r[IND_MOV] = '0' then 'Bloco com dados informados' else 'Bloco sem dados informados'"
+
+    - Registro: 'C101'
+      Descricao: 'Informações Adicionais dos Itens (FCP e Difal)'
+      Ativo: true
+      Campos:
+        - {
+            Pos: 2,
+            Tag: 'VL_FCP_UF_DEST',
+            Tipo: 'number',
+            Desc: 'Valor total do FCP UF Destino',
+          }
+        - {
+            Pos: 3,
+            Tag: 'VL_ICMS_UF_DEST',
+            Tipo: 'number',
+            Desc: 'Valor total do ICMS UF Destino',
+          }
+        - {
+            Pos: 4,
+            Tag: 'VL_ICMS_UF_REM',
+            Tipo: 'number',
+            Desc: 'Valor total do ICMS UF Remetente',
+          }
+
+    - Registro: 'C105'
+      Descricao: 'Operações com ICMS ST Recolhido para Outra UF'
+      Ativo: true
+      Campos:
+        - {
+            Pos: 2,
+            Tag: 'OPER',
+            Tipo: 'code1',
+            Desc: 'Indicador do tipo de operação',
+          }
+        - { Pos: 3, Tag: 'UF', Tipo: 'text', Desc: 'Sigla da UF' }
+
+    - Registro: 'C110'
+      Descricao: 'Informação Complementar da Nota Fiscal'
+      Ativo: true
+      Campos:
+        - {
+            Pos: 2,
+            Tag: 'COD_INF',
+            Tipo: 'text',
+            Desc: 'Código da informação complementar',
+          }
+        - {
+            Pos: 3,
+            Tag: 'TXT_COMPL',
+            Tipo: 'text',
+            Desc: 'Descrição complementar',
+          }
+
+    - Registro: 'C111'
+      Descricao: 'Processo Judicial ou Administrativo Referenciado'
+      Ativo: true
+      Campos:
+        - {
+            Pos: 2,
+            Tag: 'NUM_PROC',
+            Tipo: 'text',
+            Desc: 'Identificação do processo',
+          }
+        - { Pos: 3, Tag: 'IND_PROC', Tipo: 'code1', Desc: 'Origem do processo' }
+
+    - Registro: 'C112'
+      Descricao: 'Documento de Arrecadação Referenciado'
+      Ativo: true
+      Campos:
+        - {
+            Pos: 2,
+            Tag: 'COD_DA',
+            Tipo: 'code1',
+            Desc: 'Código do modelo do documento',
+          }
+        - { Pos: 3, Tag: 'UF', Tipo: 'text', Desc: 'UF do documento' }
+        - { Pos: 4, Tag: 'NUM_DA', Tipo: 'text', Desc: 'Número do documento' }
+        - {
+            Pos: 5,
+            Tag: 'COD_AUT',
+            Tipo: 'text',
+            Desc: 'Código de autenticação',
+          }
+
+    - Registro: 'C113'
+      Descricao: 'Documento Fiscal Referenciado'
+      Ativo: true
+      Campos:
+        - {
+            Pos: 2,
+            Tag: 'IND_OPER',
+            Tipo: 'code1',
+            Desc: 'Indicador do tipo de operação',
+          }
+        - {
+            Pos: 3,
+            Tag: 'IND_EMIT',
+            Tipo: 'code1',
+            Desc: 'Indicador do emitente',
+          }
+        - {
+            Pos: 4,
+            Tag: 'COD_PART',
+            Tipo: 'text',
+            Desc: 'Código do participante',
+          }
+        - { Pos: 5, Tag: 'COD_MOD', Tipo: 'code2', Desc: 'Código do modelo' }
+        - { Pos: 6, Tag: 'SERIE', Tipo: 'text', Desc: 'Série do documento' }
+        - { Pos: 7, Tag: 'NUM_DOC', Tipo: 'text', Desc: 'Número do documento' }
+        - { Pos: 8, Tag: 'DT_DOC', Tipo: 'date', Desc: 'Data da emissão' }
+        - {
+            Pos: 9,
+            Tag: 'CHV_DFE',
+            Tipo: 'text',
+            Desc: 'Chave do documento eletrônico',
+          }
+      Derivados:
+        - Name: 'Tipo_Operacao_Desc'
+          Kind: 'text'
+          Fn: "(r) => if r[IND_OPER] = '0' then 'Entrada' else 'Saída'"
+
+    - Registro: 'C114'
+      Descricao: 'Cupom Fiscal Referenciado'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_MOD', Tipo: 'code2', Desc: 'Código do modelo' }
+        - {
+            Pos: 3,
+            Tag: 'ECF_FAB',
+            Tipo: 'text',
+            Desc: 'Número de série do ECF',
+          }
+        - { Pos: 4, Tag: 'ECF_CX', Tipo: 'text', Desc: 'Número do caixa' }
+        - {
+            Pos: 5,
+            Tag: 'NUM_DOC',
+            Tipo: 'text',
+            Desc: 'Número do cupom fiscal',
+          }
+        - { Pos: 6, Tag: 'DT_DOC', Tipo: 'date', Desc: 'Data da emissão' }
+
+    - Registro: 'C116'
+      Descricao: 'Cupom Fiscal Eletrônico Referenciado'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_MOD', Tipo: 'code2', Desc: 'Código do modelo' }
+        - {
+            Pos: 3,
+            Tag: 'NR_SAT',
+            Tipo: 'text',
+            Desc: 'Número de série do SAT',
+          }
+        - { Pos: 4, Tag: 'CHV_CFE', Tipo: 'text', Desc: 'Chave do CFe' }
+        - { Pos: 5, Tag: 'NUM_CFE', Tipo: 'text', Desc: 'Número do CFe' }
+        - { Pos: 6, Tag: 'DT_DOC', Tipo: 'date', Desc: 'Data da emissão' }
+
+    - Registro: 'C120'
+      Descricao: 'Complemento de Importação'
+      Ativo: true
+      Campos:
+        - {
+            Pos: 2,
+            Tag: 'COD_DOC_IMP',
+            Tipo: 'code1',
+            Desc: 'Documento de importação',
+          }
+        - {
+            Pos: 3,
+            Tag: 'NUM_DOC_IMP',
+            Tipo: 'text',
+            Desc: 'Número do documento',
+          }
+        - { Pos: 4, Tag: 'PIS_IMP', Tipo: 'number', Desc: 'Valor do PIS pago' }
+        - {
+            Pos: 5,
+            Tag: 'COFINS_IMP',
+            Tipo: 'number',
+            Desc: 'Valor da COFINS paga',
+          }
+        - {
+            Pos: 6,
+            Tag: 'NUM_ACDRAW',
+            Tipo: 'text',
+            Desc: 'Número do Ato Concessório Drawback',
+          }
+
+    - Registro: 'C170'
+      Descricao: 'Itens do Documento'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'NUM_ITEM', Tipo: 'int', Desc: 'Número do item' }
+        - { Pos: 3, Tag: 'COD_ITEM', Tipo: 'text', Desc: 'Código do item' }
+        - { Pos: 10, Tag: 'CST_ICMS', Tipo: 'code3', Desc: 'CST ICMS' }
+        - { Pos: 11, Tag: 'CFOP', Tipo: 'code4', Desc: 'CFOP' }
+        - {
+            Pos: 38,
+            Tag: 'IND_MOV',
+            Tipo: 'code1',
+            Desc: 'Movimentação física',
+          }
+      Derivados:
+        - Name: 'IND_MOV_DESC'
+          Kind: 'text'
+          Fn: "(r) => if r[IND_MOV] = '0' then 'Sim' else 'Não'"
+        - Name: 'Origem_Mercadoria'
+          Kind: 'text'
+          Fn: '(r) => Text.Start(r[CST_ICMS], 1)'
+
+    - Registro: 'C176'
+      Descricao: 'Ressarcimento de ICMS ST e Antecipação'
+      Ativo: true
+      Campos:
+        - {
+            Pos: 2,
+            Tag: 'COD_MOD_RET',
+            Tipo: 'code2',
+            Desc: 'Modelo do documento',
+          }
+        - {
+            Pos: 3,
+            Tag: 'NUM_DOC_RET',
+            Tipo: 'text',
+            Desc: 'Número do documento',
+          }
+        - { Pos: 4, Tag: 'SERIE_RET', Tipo: 'text', Desc: 'Série do documento' }
+        - { Pos: 5, Tag: 'DT_RET', Tipo: 'date', Desc: 'Data do documento' }
+        - {
+            Pos: 6,
+            Tag: 'COD_PART_RET',
+            Tipo: 'text',
+            Desc: 'Código do participante',
+          }
+
+    - Registro: 'C177'
+      Descricao: 'Operações com Produtos Sujeitos a Selo de Controle'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_SELO', Tipo: 'text', Desc: 'Código do selo' }
+        - {
+            Pos: 3,
+            Tag: 'QT_SELO',
+            Tipo: 'number',
+            Desc: 'Quantidade de selos',
+          }
+
+    - Registro: 'C179'
+      Descricao: 'Informações Complementares de ST'
+      Ativo: true
+      Campos:
+        - {
+            Pos: 2,
+            Tag: 'BC_ST_ORIG_DEST',
+            Tipo: 'number',
+            Desc: 'Base de cálculo ST',
+          }
+        - {
+            Pos: 3,
+            Tag: 'ICMS_ST_REP',
+            Tipo: 'number',
+            Desc: 'ICMS ST repassado',
+          }
+        - {
+            Pos: 4,
+            Tag: 'ICMS_ST_COMPL',
+            Tipo: 'number',
+            Desc: 'ICMS ST complementar',
+          }
+        - { Pos: 5, Tag: 'ICMS_RET', Tipo: 'number', Desc: 'ICMS retido' }
+
+    - Registro: 'C180'
+      Descricao: 'Informações Complementares das Operações de Devolução (C100)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_ITEM', Tipo: 'text', Desc: 'Código do item' }
+        - { Pos: 3, Tag: 'UNID', Tipo: 'text', Desc: 'Unidade de medida' }
+        - { Pos: 4, Tag: 'QTD', Tipo: 'number', Desc: 'Quantidade' }
+        - { Pos: 5, Tag: 'VL_UNIT', Tipo: 'number', Desc: 'Valor unitário' }
+        - { Pos: 6, Tag: 'VL_ITEM', Tipo: 'number', Desc: 'Valor total' }
+
+    - Registro: 'C181'
+      Descricao: 'Informações Complementares das Operações de Devolução de Saída'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_ITEM', Tipo: 'text', Desc: 'Código do item' }
+        - { Pos: 3, Tag: 'UNID', Tipo: 'text', Desc: 'Unidade' }
+
+    - Registro: 'C185'
+      Descricao: 'Informações Complementares das Operações de Saída de Mercadorias'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'NUM_ITEM', Tipo: 'int', Desc: 'Número do item' }
+        - { Pos: 3, Tag: 'COD_ITEM', Tipo: 'text', Desc: 'Código do item' }
+
+    - Registro: 'C186'
+      Descricao: 'Informações Complementares das Operações de Entrada de Mercadorias'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'NUM_ITEM', Tipo: 'int', Desc: 'Número do item' }
+        - { Pos: 3, Tag: 'COD_ITEM', Tipo: 'text', Desc: 'Código do item' }
+
+    - Registro: 'C190'
+      Descricao: 'Registro Analítico do Documento'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'CST_ICMS', Tipo: 'code3', Desc: 'CST do ICMS' }
+        - { Pos: 3, Tag: 'CFOP', Tipo: 'code4', Desc: 'CFOP' }
+        - { Pos: 4, Tag: 'ALIQ_ICMS', Tipo: 'number', Desc: 'Alíquota do ICMS' }
+        - { Pos: 5, Tag: 'VL_OPR', Tipo: 'number', Desc: 'Valor da operação' }
+        - { Pos: 6, Tag: 'VL_BC_ICMS', Tipo: 'number', Desc: 'Base de cálculo' }
+        - { Pos: 7, Tag: 'VL_ICMS', Tipo: 'number', Desc: 'Valor do ICMS' }
+
+    - Registro: 'C191'
+      Descricao: 'Informações do FCP (C190)'
+      Ativo: true
+      Campos:
+        - {
+            Pos: 2,
+            Tag: 'VL_FCP_OP',
+            Tipo: 'number',
+            Desc: 'Valor do FCP operação',
+          }
+        - { Pos: 3, Tag: 'VL_FCP_ST', Tipo: 'number', Desc: 'Valor do FCP ST' }
+
+    - Registro: 'C195'
+      Descricao: 'Observações do Lançamento Fiscal'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_OBS', Tipo: 'text', Desc: 'Código da observação' }
+        - { Pos: 3, Tag: 'TXT_COMPL', Tipo: 'text', Desc: 'Texto complementar' }
+
+    - Registro: 'C197'
+      Descricao: 'Ajustes e Informações de Valores Provenientes de Documento Fiscal'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_AJ', Tipo: 'text', Desc: 'Código do ajuste' }
+        - {
+            Pos: 3,
+            Tag: 'DESCR_COMPL',
+            Tipo: 'text',
+            Desc: 'Descrição complementar',
+          }
+        - { Pos: 4, Tag: 'COD_ITEM', Tipo: 'text', Desc: 'Código do item' }
+        - {
+            Pos: 5,
+            Tag: 'VL_BC_ICMS',
+            Tipo: 'number',
+            Desc: 'Base de cálculo ICMS',
+          }
+        - { Pos: 6, Tag: 'ALIQ_ICMS', Tipo: 'number', Desc: 'Alíquota ICMS' }
+        - { Pos: 7, Tag: 'VL_ICMS', Tipo: 'number', Desc: 'Valor ICMS' }
+        - { Pos: 8, Tag: 'VL_OUTROS', Tipo: 'number', Desc: 'Outros valores' }
+    - Registro: 'C300'
+      Descricao: 'Resumo Diário das Notas Fiscais de Venda a Consumidor (Modelo 02)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_MOD', Tipo: 'code2', Desc: 'Código do modelo do documento fiscal' }
+        - { Pos: 3, Tag: 'SERIE', Tipo: 'text', Desc: 'Série do documento fiscal' }
+        - { Pos: 4, Tag: 'SUB', Tipo: 'text', Desc: 'Subsérie do documento fiscal' }
+        - { Pos: 5, Tag: 'NUM_DOC_INI', Tipo: 'int', Desc: 'Número do documento inicial' }
+        - { Pos: 6, Tag: 'NUM_DOC_FIN', Tipo: 'int', Desc: 'Número do documento final' }
+        - { Pos: 7, Tag: 'DT_DOC', Tipo: 'date', Desc: 'Data da emissão dos documentos fiscais' }
+        - { Pos: 8, Tag: 'VL_DOC', Tipo: 'number', Desc: 'Valor total dos documentos' }
+        - { Pos: 9, Tag: 'VL_PIS', Tipo: 'number', Desc: 'Valor total do PIS' }
+        - { Pos: 10, Tag: 'VL_COFINS', Tipo: 'number', Desc: 'Valor total da COFINS' }
+      Derivados:
+        - Name: 'Modelo_Desc'
+          Kind: 'text'
+          Fn: "(r) => if r[COD_MOD] = '02' then 'Nota Fiscal de Venda a Consumidor' else 'Outros'"
+
+    - Registro: 'C310'
+      Descricao: 'Documentos Cancelados de Notas Fiscais de Venda a Consumidor (Modelo 02)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'NUM_DOC_CANC', Tipo: 'int', Desc: 'Número do documento fiscal cancelado' }
+
+    - Registro: 'C320'
+      Descricao: 'Registro Analítico do Resumo Diário (Modelo 02)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'CST_ICMS', Tipo: 'code3', Desc: 'CST do ICMS' }
+        - { Pos: 3, Tag: 'CFOP', Tipo: 'code4', Desc: 'CFOP' }
+        - { Pos: 4, Tag: 'ALIQ_ICMS', Tipo: 'number', Desc: 'Alíquota do ICMS' }
+        - { Pos: 5, Tag: 'VL_OPR', Tipo: 'number', Desc: 'Valor total da operação' }
+        - { Pos: 6, Tag: 'VL_BC_ICMS', Tipo: 'number', Desc: 'Base de cálculo do ICMS' }
+        - { Pos: 7, Tag: 'VL_ICMS', Tipo: 'number', Desc: 'Valor do ICMS creditado/debitado' }
+        - { Pos: 8, Tag: 'VL_RED_BC', Tipo: 'number', Desc: 'Valor da redução da base de cálculo' }
+        - { Pos: 9, Tag: 'COD_OBS', Tipo: 'text', Desc: 'Código da observação (0460)' }
+
+    - Registro: 'C321'
+      Descricao: 'Itens do Resumo Diário (Modelo 02)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_ITEM', Tipo: 'text', Desc: 'Código do item (0200)' }
+        - { Pos: 3, Tag: 'QTD', Tipo: 'number', Desc: 'Quantidade acumulada do item' }
+        - { Pos: 4, Tag: 'UNID', Tipo: 'text', Desc: 'Unidade de medida' }
+        - { Pos: 5, Tag: 'VL_ITEM', Tipo: 'number', Desc: 'Valor acumulado do item' }
+        - { Pos: 6, Tag: 'VL_DESC', Tipo: 'number', Desc: 'Valor acumulado dos descontos' }
+        - { Pos: 7, Tag: 'VL_BC_ICMS', Tipo: 'number', Desc: 'Base de cálculo do ICMS' }
+        - { Pos: 8, Tag: 'VL_ICMS', Tipo: 'number', Desc: 'Valor do ICMS acumulado' }
+        - { Pos: 9, Tag: 'VL_PIS', Tipo: 'number', Desc: 'Valor do PIS acumulado' }
+        - { Pos: 10, Tag: 'VL_COFINS', Tipo: 'number', Desc: 'Valor da COFINS acumulado' }
+
+    - Registro: 'C330'
+      Descricao: 'Informações Complementares (Modelo 02)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_MOT_REST_COMPL', Tipo: 'code1', Desc: 'Motivo da restituição ou complementação' }
+        - { Pos: 3, Tag: 'VL_REST_ICMS_MOT', Tipo: 'number', Desc: 'Valor do ICMS a ser restituído' }
+        - { Pos: 4, Tag: 'VL_COMPL_ICMS_MOT', Tipo: 'number', Desc: 'Valor do ICMS a ser complementado' }
+
+    - Registro: 'C350'
+      Descricao: 'Nota Fiscal de Venda a Consumidor (Modelo 02)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'SERIE', Tipo: 'text', Desc: 'Série do documento fiscal' }
+        - { Pos: 3, Tag: 'SUB', Tipo: 'text', Desc: 'Subsérie do documento fiscal' }
+        - { Pos: 4, Tag: 'NUM_DOC', Tipo: 'int', Desc: 'Número do documento fiscal' }
+        - { Pos: 5, Tag: 'DT_DOC', Tipo: 'date', Desc: 'Data da emissão' }
+        - { Pos: 6, Tag: 'CNPJ_CPF', Tipo: 'text', Desc: 'CNPJ ou CPF do destinatário' }
+        - { Pos: 7, Tag: 'VL_DOC', Tipo: 'number', Desc: 'Valor total do documento' }
+        - { Pos: 8, Tag: 'VL_DESC', Tipo: 'number', Desc: 'Valor total do desconto' }
+        - { Pos: 9, Tag: 'VL_PIS', Tipo: 'number', Desc: 'Valor do PIS' }
+        - { Pos: 10, Tag: 'VL_COFINS', Tipo: 'number', Desc: 'Valor da COFINS' }
+        - { Pos: 11, Tag: 'COD_CTA', Tipo: 'text', Desc: 'Código da conta contábil' }
+
+    - Registro: 'C370'
+      Descricao: 'Itens do Documento (C350)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'NUM_ITEM', Tipo: 'int', Desc: 'Número sequencial do item' }
+        - { Pos: 3, Tag: 'COD_ITEM', Tipo: 'text', Desc: 'Código do item (0200)' }
+        - { Pos: 4, Tag: 'QTD', Tipo: 'number', Desc: 'Quantidade do item' }
+        - { Pos: 5, Tag: 'UNID', Tipo: 'text', Desc: 'Unidade de medida' }
+        - { Pos: 6, Tag: 'VL_ITEM', Tipo: 'number', Desc: 'Valor total do item' }
+        - { Pos: 7, Tag: 'VL_DESC', Tipo: 'number', Desc: 'Valor do desconto no item' }
+
+    - Registro: 'C380'
+      Descricao: 'Registro Analítico do Documento (C350)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'CST_ICMS', Tipo: 'code3', Desc: 'CST do ICMS' }
+        - { Pos: 3, Tag: 'CFOP', Tipo: 'code4', Desc: 'CFOP' }
+        - { Pos: 4, Tag: 'ALIQ_ICMS', Tipo: 'number', Desc: 'Alíquota do ICMS' }
+        - { Pos: 5, Tag: 'VL_OPR', Tipo: 'number', Desc: 'Valor total da operação' }
+        - { Pos: 6, Tag: 'VL_BC_ICMS', Tipo: 'number', Desc: 'Base de cálculo do ICMS' }
+        - { Pos: 7, Tag: 'VL_ICMS', Tipo: 'number', Desc: 'Valor do ICMS' }
+        - { Pos: 8, Tag: 'VL_RED_BC', Tipo: 'number', Desc: 'Valor da redução da base de cálculo' }
+        - { Pos: 9, Tag: 'COD_OBS', Tipo: 'text', Desc: 'Código da observação (0460)' }
+
+    - Registro: 'C390'
+      Descricao: 'Registro Analítico das Notas Fiscais de Venda a Consumidor (Modelo 02)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'CST_ICMS', Tipo: 'code3', Desc: 'CST do ICMS' }
+        - { Pos: 3, Tag: 'CFOP', Tipo: 'code4', Desc: 'CFOP' }
+        - { Pos: 4, Tag: 'ALIQ_ICMS', Tipo: 'number', Desc: 'Alíquota do ICMS' }
+        - { Pos: 5, Tag: 'VL_OPR', Tipo: 'number', Desc: 'Valor total da operação' }
+        - { Pos: 6, Tag: 'VL_BC_ICMS', Tipo: 'number', Desc: 'Base de cálculo do ICMS' }
+        - { Pos: 7, Tag: 'VL_ICMS', Tipo: 'number', Desc: 'Valor do ICMS' }
+        - { Pos: 8, Tag: 'VL_RED_BC', Tipo: 'number', Desc: 'Valor da redução da base de cálculo' }
+        - { Pos: 9, Tag: 'COD_OBS', Tipo: 'text', Desc: 'Código da observação (0460)' }
+  # --- BLOCO E: APURAÇÃO DO ICMS E DO IPI ---
+  Bloco_E:
+  Descricao: 'Apuração do ICMS e do IPI'
+  Registros:
+    - Registro: 'E001'
+      Descricao: 'Abertura do Bloco E'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'IND_MOV', Tipo: 'code1', Desc: 'Indicador de movimento' }
+      Derivados:
+        - Name: 'IND_MOV_DESC'
+          Kind: 'text'
+          Fn: "(r) => if r[IND_MOV] = '0' then 'Bloco com dados' else 'Bloco sem dados'"
+
+    - Registro: 'E100'
+      Descricao: 'Período da Apuração do ICMS'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'DT_INI', Tipo: 'date', Desc: 'Data inicial' }
+        - { Pos: 3, Tag: 'DT_FIN', Tipo: 'date', Desc: 'Data final' }
+
+    - Registro: 'E110'
+      Descricao: 'Apuração do ICMS - Operações Próprias'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'VL_TOT_DEBITOS', Tipo: 'number' }
+        - { Pos: 3, Tag: 'VL_AJ_DEBITOS', Tipo: 'number' }
+        - { Pos: 4, Tag: 'VL_TOT_AJ_DEBITOS', Tipo: 'number' }
+        - { Pos: 5, Tag: 'VL_ESTORNOS_CRED', Tipo: 'number' }
+        - { Pos: 6, Tag: 'VL_TOT_CREDITOS', Tipo: 'number' }
+        - { Pos: 7, Tag: 'VL_AJ_CREDITOS', Tipo: 'number' }
+        - { Pos: 8, Tag: 'VL_TOT_AJ_CREDITOS', Tipo: 'number' }
+        - { Pos: 9, Tag: 'VL_ESTORNOS_DEB', Tipo: 'number' }
+        - { Pos: 10, Tag: 'VL_SLD_CREDOR_ANT', Tipo: 'number' }
+        - { Pos: 11, Tag: 'VL_SLD_APURADO', Tipo: 'number' }
+        - { Pos: 12, Tag: 'VL_TOT_DED', Tipo: 'number' }
+        - { Pos: 13, Tag: 'VL_ICMS_RECOLHER', Tipo: 'number' }
+        - { Pos: 14, Tag: 'VL_SLD_CREDOR_TRANSPORTAR', Tipo: 'number' }
+        - { Pos: 15, Tag: 'DEB_ESP', Tipo: 'number' }
+
+    - Registro: 'E111'
+      Descricao: 'Ajustes/Informações de Valores Provenientes de Documento Fiscal'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_AJ_APUR', Tipo: 'text', Desc: 'Código do ajuste' }
+        - { Pos: 3, Tag: 'DESCR_COMPL_AJ', Tipo: 'text' }
+        - { Pos: 4, Tag: 'VL_AJ_APUR', Tipo: 'number' }
+
+    - Registro: 'E112'
+      Descricao: 'Informações Adicionais dos Ajustes da Apuração - Documentos de Arrecadação'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'NUM_DA', Tipo: 'text' }
+        - { Pos: 3, Tag: 'NUM_PROC', Tipo: 'text' }
+        - { Pos: 4, Tag: 'IND_PROC', Tipo: 'code1' }
+
+    - Registro: 'E113'
+      Descricao: 'Informações Adicionais dos Ajustes da Apuração - Identificação de Documentos Fiscais'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_PART', Tipo: 'text' }
+        - { Pos: 3, Tag: 'COD_MOD', Tipo: 'code2' }
+        - { Pos: 4, Tag: 'SERIE', Tipo: 'text' }
+        - { Pos: 5, Tag: 'SUB', Tipo: 'text' }
+        - { Pos: 6, Tag: 'NUM_DOC', Tipo: 'int' }
+        - { Pos: 7, Tag: 'DT_DOC', Tipo: 'date' }
+        - { Pos: 8, Tag: 'COD_ITEM', Tipo: 'text' }
+        - { Pos: 9, Tag: 'VL_AJ_ITEM', Tipo: 'number' }
+
+    - Registro: 'E115'
+      Descricao: 'Informações Adicionais da Apuração - Valores Declaratórios'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_INF_ADIC', Tipo: 'text' }
+        - { Pos: 3, Tag: 'VL_INF_ADIC', Tipo: 'number' }
+        - { Pos: 4, Tag: 'DESCR_COMPL_AJ', Tipo: 'text' }
+
+    - Registro: 'E116'
+      Descricao: 'Obrigações do ICMS a Recolher - Operações Próprias'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_OR', Tipo: 'text', Desc: 'Código da obrigação' }
+        - { Pos: 3, Tag: 'VL_OR', Tipo: 'number' }
+        - { Pos: 4, Tag: 'DT_VCTO', Tipo: 'date' }
+        - { Pos: 5, Tag: 'COD_REC', Tipo: 'text' }
+        - { Pos: 6, Tag: 'NUM_PROC', Tipo: 'text' }
+        - { Pos: 7, Tag: 'IND_PROC', Tipo: 'code1' }
+
+    - Registro: 'E200'
+      Descricao: 'Período da Apuração do ICMS Substituição Tributária'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'UF', Tipo: 'text' }
+        - { Pos: 3, Tag: 'DT_INI', Tipo: 'date' }
+        - { Pos: 4, Tag: 'DT_FIN', Tipo: 'date' }
+
+    - Registro: 'E210'
+      Descricao: 'Apuração do ICMS Substituição Tributária'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'IND_MOV_ST', Tipo: 'code1' }
+        - { Pos: 3, Tag: 'VL_SLD_CRED_ANT_ST', Tipo: 'number' }
+        - { Pos: 4, Tag: 'VL_DEBITOS_ST', Tipo: 'number' }
+        - { Pos: 14, Tag: 'VL_ICMS_RECOL_ST', Tipo: 'number' }
+
+    - Registro: 'E220'
+      Descricao: 'Ajustes/Informações de Valores Provenientes de Documento Fiscal (ST)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_AJ_APUR', Tipo: 'text' }
+        - { Pos: 3, Tag: 'DESCR_COMPL_AJ', Tipo: 'text' }
+        - { Pos: 4, Tag: 'VL_AJ_APUR', Tipo: 'number' }
+
+    - Registro: 'E230'
+      Descricao: 'Informações Adicionais dos Ajustes da Apuração (ST) - Arrecadação'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'NUM_DA', Tipo: 'text' }
+
+    - Registro: 'E240'
+      Descricao: 'Informações Adicionais dos Ajustes da Apuração (ST) - Identificação de Docs'
+      Ativo: true
+      Campos:
+        - { Pos: 6, Tag: 'NUM_DOC', Tipo: 'int' }
+        - { Pos: 9, Tag: 'VL_AJ_ITEM', Tipo: 'number' }
+
+    - Registro: 'E250'
+      Descricao: 'Obrigações do ICMS a Recolher - Substituição Tributária'
+      Ativo: true
+      Campos:
+        - { Pos: 3, Tag: 'VL_OR', Tipo: 'number' }
+        - { Pos: 4, Tag: 'DT_VCTO', Tipo: 'date' }
+
+    - Registro: 'E300'
+      Descricao: 'Período de Apuração do ICMS Diferencial de Alíquota e FCP'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'UF', Tipo: 'text' }
+        - { Pos: 3, Tag: 'DT_INI', Tipo: 'date' }
+        - { Pos: 4, Tag: 'DT_FIN', Tipo: 'date' }
+
+    - Registro: 'E310'
+      Descricao: 'Apuração do ICMS Diferencial de Alíquota e FCP'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'IND_MOV_DIFAL', Tipo: 'code1' }
+        - { Pos: 3, Tag: 'VL_SLD_CRED_ANT_DIFAL', Tipo: 'number' }
+        - { Pos: 4, Tag: 'VL_TOT_DEBITOS_DIFAL', Tipo: 'number' }
+        - { Pos: 12, Tag: 'VL_ICMS_RECOL_DIFAL', Tipo: 'number' }
+
+    - Registro: 'E311'
+      Descricao: 'Ajustes/Informações de Valores (Difal/FCP)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_AJ_APUR', Tipo: 'text' }
+        - { Pos: 4, Tag: 'VL_AJ_APUR', Tipo: 'number' }
+
+    - Registro: 'E312'
+      Descricao: 'Informações Adicionais - Arrecadação (Difal/FCP)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'NUM_DA', Tipo: 'text' }
+
+    - Registro: 'E313'
+      Descricao: 'Informações Adicionais - Documentos Fiscais (Difal/FCP)'
+      Ativo: true
+      Campos:
+        - { Pos: 6, Tag: 'NUM_DOC', Tipo: 'int' }
+
+    - Registro: 'E316'
+      Descricao: 'Obrigações do ICMS a Recolher (Difal/FCP)'
+      Ativo: true
+      Campos:
+        - { Pos: 3, Tag: 'VL_OR', Tipo: 'number' }
+        - { Pos: 4, Tag: 'DT_VCTO', Tipo: 'date' }
+
+   # --- BLOCO G: CIAP ---
+   Bloco_G:
+  Descricao: 'Controle do Crédito do ICMS do Ativo Imobilizado - CIAP'
+  Registros:
+    # --- REGISTRO G001: ABERTURA DO BLOCO G ---
+    - Registro: 'G001'
+      Descricao: 'Abertura do Bloco G'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'IND_MOV', Tipo: 'code1', Desc: 'Indicador de movimento' }
+      Derivados:
+        - Name: 'IND_MOV_DESC'
+          Kind: 'text'
+          Fn: "(r) => if r[IND_MOV] = '0' then 'Bloco com dados' else 'Bloco sem dados'"
+
+    # --- REGISTRO G110: ICMS - ATIVO IMOBILIZADO - CIAP ---
+    - Registro: 'G110'
+      Descricao: 'Apuração do ICMS do Ativo Imobilizado'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'DT_INI', Tipo: 'date', Desc: 'Data inicial do período' }
+        - { Pos: 3, Tag: 'DT_FIN', Tipo: 'date', Desc: 'Data final do período' }
+        - { Pos: 4, Tag: 'SALDO_INIC_IA', Tipo: 'number', Desc: 'Saldo inicial de ICMS' }
+        - { Pos: 5, Tag: 'SOM_PARC', Tipo: 'number', Desc: 'Somatório das parcelas' }
+        - { Pos: 6, Tag: 'VL_PARC_PASS', Tipo: 'number', Desc: 'Valor da parcela passível de crédito' }
+        - { Pos: 7, Tag: 'VL_FORF', Tipo: 'number', Desc: 'Valor do ICMS de saídas isentas' }
+        - { Pos: 8, Tag: 'VL_POT', Tipo: 'number', Desc: 'Valor do ICMS total das saídas' }
+        - { Pos: 9, Tag: 'VL_REST_ICMS', Tipo: 'number', Desc: 'Valor do ICMS a ser apropriado' }
+
+    # --- REGISTRO G125: MOVIMENTAÇÃO DE BEM DO ATIVO IMOBILIZADO ---
+    - Registro: 'G125'
+      Descricao: 'Movimentação de Bem do Ativo Imobilizado'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_BEM', Tipo: 'text', Desc: 'Código do bem (0300)' }
+        - { Pos: 3, Tag: 'DT_MOV', Tipo: 'date', Desc: 'Data da movimentação' }
+        - { Pos: 4, Tag: 'TIPO_MOV', Tipo: 'code2', Desc: 'Tipo de movimentação' }
+        - { Pos: 5, Tag: 'VL_IMOB_ICMS_OP', Tipo: 'number', Desc: 'ICMS da operação própria' }
+        - { Pos: 6, Tag: 'VL_IMOB_ICMS_ST', Tipo: 'number', Desc: 'ICMS ST' }
+        - { Pos: 7, Tag: 'VL_IMOB_ICMS_FR', Tipo: 'number', Desc: 'ICMS sobre frete' }
+        - { Pos: 8, Tag: 'VL_IMOB_ICMS_DIF', Tipo: 'number', Desc: 'ICMS diferencial de alíquota' }
+        - { Pos: 9, Tag: 'NUM_PARC', Tipo: 'int', Desc: 'Número da parcela' }
+        - { Pos: 10, Tag: 'VL_PARC_PASS', Tipo: 'number', Desc: 'Valor da parcela passível de crédito' }
+      Derivados:
+        - Name: 'TIPO_MOV_DESC'
+          Kind: 'text'
+          Fn: |
+            (r) => let t = r[TIPO_MOV] in 
+            if t="SI" then "Saldo Inicial" else if t="IM" then "Imobilização" 
+            else if t="IA" then "Imobilização em Andamento" else if t="AT" then "Alienação/Transferência" 
+            else if t="MC" then "Mudança de Conta" else if t="PE" then "Perecimento/Extravio" else "Outros"
+
+    # --- REGISTRO G126: OUTROS CRÉDITOS CIAP ---
+    - Registro: 'G126'
+      Descricao: 'Outros Créditos CIAP (Período anterior ao SPED)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'DT_INI', Tipo: 'date' }
+        - { Pos: 3, Tag: 'DT_FIN', Tipo: 'date' }
+        - { Pos: 4, Tag: 'NUM_PARC', Tipo: 'int' }
+        - { Pos: 5, Tag: 'VL_PARC_PASS', Tipo: 'number' }
+
+    # --- REGISTRO G130: IDENTIFICAÇÃO DO DOCUMENTO FISCAL ---
+    - Registro: 'G130'
+      Descricao: 'Identificação do Documento Fiscal do Bem'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'IND_EMIT', Tipo: 'code1', Desc: '0-Próprio, 1-Terceiros' }
+        - { Pos: 3, Tag: 'COD_PART', Tipo: 'text', Desc: 'Código do participante' }
+        - { Pos: 4, Tag: 'COD_MOD', Tipo: 'code2', Desc: 'Modelo do documento' }
+        - { Pos: 5, Tag: 'SERIE', Tipo: 'text' }
+        - { Pos: 6, Tag: 'NUM_DOC', Tipo: 'int' }
+        - { Pos: 7, Tag: 'DT_DOC', Tipo: 'date' }
+        - { Pos: 8, Tag: 'CHV_NFE', Tipo: 'text', Desc: 'Chave da NF-e' }
+
+    # --- REGISTRO G140: IDENTIFICAÇÃO DO ITEM DO DOCUMENTO FISCAL ---
+    - Registro: 'G140'
+      Descricao: 'Identificação do Item do Documento Fiscal'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'NUM_ITEM', Tipo: 'int' }
+        - { Pos: 3, Tag: 'COD_ITEM', Tipo: 'text' }
+
+  # --- BLOCO H: INVENTÁRIO FÍSICO ---
+  Bloco_H:
+  Descricao: 'Inventário Físico'
+  Registros:
+    # --- REGISTRO H001: ABERTURA DO BLOCO H ---
+    - Registro: 'H001'
+      Descricao: 'Abertura do Bloco H'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'IND_MOV', Tipo: 'code1', Desc: 'Indicador de movimento' }
+      Derivados:
+        - Name: 'IND_MOV_DESC'
+          Kind: 'text'
+          Fn: "(r) => if r[IND_MOV] = '0' then 'Bloco com dados' else 'Bloco sem dados'"
+
+    # --- REGISTRO H005: TOTAIS DO INVENTÁRIO ---
+    - Registro: 'H005'
+      Descricao: 'Totais do Inventário'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'DT_INV', Tipo: 'date', Desc: 'Data do inventário' }
+        - { Pos: 3, Tag: 'VL_INV', Tipo: 'number', Desc: 'Valor total do inventário' }
+        - { Pos: 4, Tag: 'MOT_INV', Tipo: 'code2', Desc: 'Motivo do inventário' }
+      Derivados:
+        - Name: 'MOT_INV_DESC'
+          Kind: 'text'
+          Fn: |
+            (r) => let m = r[MOT_INV] in 
+            if m="01" then "No final do período" else if m="02" then "Na mudança de forma de tributação" 
+            else if m="03" then "Na solicitação da baixa cadastral" else if m="04" then "Na alteração de regime de pagamento" 
+            else if m="05" then "Por determinação do fisco" else "Outros"
+
+    # --- REGISTRO H010: INVENTÁRIO ---
+    - Registro: 'H010'
+      Descricao: 'Detalhamento do Itens do Inventário'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_ITEM', Tipo: 'text', Desc: 'Código do item (0200)' }
+        - { Pos: 3, Tag: 'UNID', Tipo: 'text', Desc: 'Unidade de medida' }
+        - { Pos: 4, Tag: 'QTD', Tipo: 'number', Desc: 'Quantidade do item' }
+        - { Pos: 5, Tag: 'VL_UNIT', Tipo: 'number', Desc: 'Valor unitário' }
+        - { Pos: 6, Tag: 'VL_ITEM', Tipo: 'number', Desc: 'Valor total do item' }
+        - { Pos: 7, Tag: 'IND_PROP', Tipo: 'code1', Desc: 'Indicador de propriedade' }
+        - { Pos: 8, Tag: 'COD_PART', Tipo: 'text', Desc: 'Código do participante (0150)' }
+        - { Pos: 9, Tag: 'TXT_COMPL', Tipo: 'text', Desc: 'Descrição complementar' }
+        - { Pos: 10, Tag: 'COD_CTA', Tipo: 'text', Desc: 'Conta contábil' }
+        - { Pos: 11, Tag: 'VL_ITEM_IR', Tipo: 'number', Desc: 'Valor para fins de IR' }
+      Derivados:
+        - Name: 'POSSE_DESC'
+          Kind: 'text'
+          Fn: |
+            (r) => let p = r[IND_PROP] in 
+            if p="1" then "Item próprio em poder do informante" 
+            else if p="2" then "Item próprio em poder de terceiros" 
+            else "Item de terceiros em poder do informante"
+
+    # --- REGISTRO H020: INFORMAÇÃO COMPLEMENTAR DO INVENTÁRIO ---
+    - Registro: 'H020'
+      Descricao: 'Informação Complementar (CST e Base de Cálculo)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'CST_ICMS', Tipo: 'code3', Desc: 'CST ICMS' }
+        - { Pos: 3, Tag: 'BC_ICMS', Tipo: 'number', Desc: 'Base de cálculo do ICMS' }
+        - { Pos: 4, Tag: 'VL_ICMS', Tipo: 'number', Desc: 'Valor do ICMS' }
+
+    # --- REGISTRO H030: INFORMAÇÕES SOBRE O ESTOQUE POR LOTE ---
+    - Registro: 'H030'
+      Descricao: 'Informações de ICMS ST (Ressarcimento/Restituição)'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'VL_ICMS_OP', Tipo: 'number', Desc: 'Valor do ICMS Op. Própria' }
+        - { Pos: 3, Tag: 'VL_BC_ICMS_ST', Tipo: 'number', Desc: 'Base Cálculo ICMS ST' }
+        - { Pos: 4, Tag: 'VL_ICMS_ST', Tipo: 'number', Desc: 'Valor do ICMS ST' }
+        - { Pos: 5, Tag: 'VL_FCP', Tipo: 'number', Desc: 'Valor do FCP' }
+
+  # --- BLOCO L: CONTROLE DE PRODUÇÃO E ESTOQUE ---
+  Bloco_L:
+  Descricao: 'Controle de Selos de Controle IPI'
+  Registros:
+    # --- REGISTRO L001: ABERTURA DO BLOCO L ---
+    - Registro: 'L001'
+      Descricao: 'Abertura do Bloco L'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'IND_MOV', Tipo: 'code1', Desc: 'Indicador de movimento' }
+      Derivados:
+        - Name: 'IND_MOV_DESC'
+          Kind: 'text'
+          Fn: "(r) => if r[IND_MOV] = '0' then 'Bloco com dados' else 'Bloco sem dados'"
+
+    # --- REGISTRO L100: EXISTÊNCIA DE SELOS DE CONTROLE ---
+    - Registro: 'L100'
+      Descricao: 'Existência de Selos de Controle IPI'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_SELO', Tipo: 'text', Desc: 'Código do selo de controle' }
+        - { Pos: 3, Tag: 'QUANT_INIC', Tipo: 'number', Desc: 'Quantidade inicial' }
+        - { Pos: 4, Tag: 'QUANT_ENTR', Tipo: 'number', Desc: 'Quantidade entrada' }
+        - { Pos: 5, Tag: 'QUANT_SAID', Tipo: 'number', Desc: 'Quantidade saída' }
+        - { Pos: 6, Tag: 'QUANT_REMAN', Tipo: 'number', Desc: 'Quantidade remanescente' }
+
+    # --- REGISTRO L200: MOVIMENTAÇÃO DE SELOS DE CONTROLE ---
+    - Registro: 'L200'
+      Descricao: 'Movimentação de Selos de Controle IPI'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_MOD', Tipo: 'code2', Desc: 'Código do modelo (01 ou 55)' }
+        - { Pos: 3, Tag: 'SERIE', Tipo: 'text', Desc: 'Série do documento' }
+        - { Pos: 4, Tag: 'NUM_INI', Tipo: 'int', Desc: 'Número inicial' }
+        - { Pos: 5, Tag: 'NUM_FIN', Tipo: 'int', Desc: 'Número final' }
+        - { Pos: 6, Tag: 'QUANT', Tipo: 'number', Desc: 'Quantidade de documentos' }
+        - { Pos: 7, Tag: 'VL_UNIT', Tipo: 'number', Desc: 'Valor unitário do selo' }
+        - { Pos: 8, Tag: 'VL_TOTAL', Tipo: 'number', Desc: 'Valor total dos selos' }
+
+    # --- REGISTRO L210: INFORMATIVO DE COMPOSIÇÃO DO PRODUTO (FICHA TÉCNICA) ---
+    - Registro: 'L210'
+      Descricao: 'Detalhamento da Movimentação de Selos'
+      Ativo: true
+      Campos:
+        - { Pos: 2, Tag: 'COD_ITEM', Tipo: 'text', Desc: 'Código do item (0200)' }
+        - { Pos: 3, Tag: 'QTD_SAIDA', Tipo: 'number', Desc: 'Quantidade de selos utilizados' }

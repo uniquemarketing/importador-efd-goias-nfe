@@ -1,0 +1,13 @@
+COD_SIT;"DESC_SIT";INICIO;FIM
+00;"Documento regular";2009-01-01;
+01;"Documento regular extemporâneo";2009-01-01;
+02;"Documento cancelado";2009-01-01;
+03;"Documento cancelado extemporâneo";2009-01-01;
+04;"NFe ou CT-e denegada";2009-01-01;2022-12-31
+05;"NFe ou CT-e Numeração inutilizada";2009-01-01;2022-12-31
+06;"Documento Fiscal Complementar";2009-01-01;2022-12-31
+06;"Documento Fiscal Complementar";2023-01-01;
+07;"Documento Fiscal Complementar extemporâneo";2009-01-01;
+08;"Documento Fiscal emitido com base em Regime Especial ou Norma Específica";2009-01-01;
+09;"09 Documento Fiscal Substiuído";2018-01-01;2018-01-02
+09;"Documento Fiscal Substituído";2018-01-03;2018-01-04
