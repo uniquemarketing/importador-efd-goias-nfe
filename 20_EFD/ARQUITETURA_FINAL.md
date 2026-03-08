@@ -19,8 +19,10 @@ A arquitetura foi organizada por camadas, separando ingestao, funcoes, metadados
     - `fnExtraiRegistro`
     - `fnFinalDate`
     - `fnPeriodo`
-    - `fnParseKind` (versao evoluida)
     - validadores auxiliares
+- `00_Configuracoes/A_Funcoes_Compartilhadas`
+  - Funcoes compartilhadas entre modulos:
+    - `fnParseKind` (motor unico de tipagem)
 - `20_EFD/220_Layouts`
   - Contratos de layout por registro (`Layout_*`)
 - `20_EFD/225_Meta`
@@ -28,7 +30,6 @@ A arquitetura foi organizada por camadas, separando ingestao, funcoes, metadados
     - `Meta_Registros`
     - `Layouts_Index`
     - `schemaAuxiliares`
-    - `NOVO_META`
   - Manifesto da migracao:
     - `MIGRACAO_MANIFEST.csv`
 - `20_EFD/230_Extraídos`
@@ -46,7 +47,7 @@ A arquitetura foi organizada por camadas, separando ingestao, funcoes, metadados
 5. Consultas de `Diag_*` e `QA_*` validam qualidade e consistencia.
 
 ## Motor de Tipagem (fnParseKind)
-`fnParseKind` em `210_Funções` foi modernizada para:
+`fnParseKind` foi consolidada em `00_Configuracoes/A_Funcoes_Compartilhadas/fnParseKind.m` e usada por NFe + EFD:
 - manter robustez de parse atual (text, int, number, date, datetime, logical, codeN, decimais dinamicos `*v*`);
 - suportar especificidades EFD:
   - `date8` (`ddmmaaaa`);
@@ -61,5 +62,4 @@ Tambem foi mantido o modo de inferencia de tipo (`mode = "type"`), usado nas tip
 - O cabecalho `section Section1;` foi removido.
 - O prefixo `shared <nome> =` foi removido de cada bloco.
 - O `;` final de cada bloco foi removido.
-- Nomes especiais (ex.: `#"NOVO META"`) foram normalizados para nome de arquivo (`NOVO_META.m`) preservando o nome logico no manifesto.
-
+- `NOVO_META` foi consolidada em `Meta_Registros`, mantendo fonte unica de verdade para metadados de registros.
