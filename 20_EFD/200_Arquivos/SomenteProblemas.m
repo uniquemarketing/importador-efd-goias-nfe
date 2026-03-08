@@ -1,14 +1,46 @@
 let
-    FolderPath =
+    Cfg = Config,
+    PastasRaw =
         let
-            rngTry = try Excel.CurrentWorkbook(){[Name="patch_EFD"]}[Content] otherwise null,
-            raw = if rngTry = null then null else try Text.From(rngTry{0}[Column1]) otherwise null,
-            v = if raw = null then null else Text.Trim(raw),
-            path = if Text.EndsWith(v, "\") then v else v & "\"
+            EmptyPastas = #table(type table [PastaTipo = text, PastaPath = nullable text, Importar = nullable logical], {}),
+            PastasFromConfig =
+                if Value.Is(Cfg, type table) then
+                    Cfg
+                else if Value.Is(Cfg, type record) then
+                    try Cfg[Pastas] otherwise EmptyPastas
+                else
+                    EmptyPastas,
+            NormalizedPastas = try
+                Table.SelectColumns(PastasFromConfig, {"PastaTipo", "PastaPath", "Importar"}, MissingField.UseNull)
+            otherwise
+                EmptyPastas
         in
-            path,
-
-    Source = Folder.Files(FolderPath),
+            NormalizedPastas,
+    PastasEFD = Table.SelectRows(
+        PastasRaw,
+        each
+            let
+                tipo = try Text.Upper(Text.Trim(Text.From([PastaTipo]))) otherwise "",
+                importar = try [Importar] otherwise false,
+                path = try Text.Trim(Text.From([PastaPath])) otherwise ""
+            in
+                tipo = "EFD" and importar = true and path <> ""
+    ),
+    EFDPath = try Text.From(PastasEFD{0}[PastaPath]) otherwise null,
+    EmptyFolderFiles = #table(
+        type table [
+            Content = binary,
+            Name = text,
+            Extension = text,
+            #"Date accessed" = nullable datetime,
+            #"Date modified" = nullable datetime,
+            #"Date created" = nullable datetime,
+            Attributes = record,
+            #"Folder Path" = text
+        ],
+        {}
+    ),
+    Source = if EFDPath = null then EmptyFolderFiles else try Folder.Files(EFDPath) otherwise EmptyFolderFiles,
     OnlyTxt = Table.SelectRows(Source, each Text.Lower([Extension]) = ".txt"),
     AddPaths = Table.AddColumn(OnlyTxt, "Paths", each [Folder Path] & [Name], type text),
 
