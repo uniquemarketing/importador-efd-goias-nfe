@@ -49,9 +49,10 @@ let
         DuplicateColumnName, {"Folder Path", "Name"}, Combiner.CombineTextByDelimiter("", QuoteStyle.None), "Paths"
     ),
     SelectColumnsNomePath = Table.SelectColumns(CombineColumnsPaths, {"Nome", "Paths"}),
-    // Blindagem de CPU: Força o processamento do arquivo de forma isolada e trava o resultado tabular na memória
+    // Processa cada arquivo de forma isolada, sem reter a tabela inteira em RAM.
+    // O buffering físico do arquivo já acontece dentro de fnSPEDTabela via Binary.Buffer.
     AddCustomColumnColunaTabelasSped = Table.AddColumn(
-        SelectColumnsNomePath, "ColunaTabelasSped", each Table.Buffer(fnSPEDTabela([Paths]))
+        SelectColumnsNomePath, "ColunaTabelasSped", each fnSPEDTabela([Paths])
     ),
     // 1) Extrai a dataInicial da tabela aninhada (1x por arquivo)
     AddDataInicialArquivo = Table.AddColumn(
@@ -229,11 +230,6 @@ let
             "C039"
         }
     ),
-    // =================================================================
-    // 6. BLINDAGEM CONTRA N+1 (COMPARTILHAMENTO DE CACHE)
-    // =================================================================
-    // Força o Mashup Engine a ler os 50 arquivos UMA única vez.
-    // As tabelas R0000, R0150, etc., lerão instantaneamente desta RAM.
     Staging_Na_Memoria = Reordena01
 in
     Staging_Na_Memoria

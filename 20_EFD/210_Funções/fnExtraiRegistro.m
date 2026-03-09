@@ -119,9 +119,15 @@ let
                         kk = if k = null then "" else Text.Lower(Text.Trim(Text.From(k)))
                     in
                         if kk = "text" then type text
-                        else if kk = "date8" then type date
                         else if kk = "int" then Int64.Type
+                        else if kk = "number" then type number
+                        else if kk = "logical" then type logical
+                        else if kk = "date" or kk = "date8" then type date
+                        else if kk = "datetime" then type datetime
+                        else if kk = "13v2" then Currency.Type
+                        else if Text.StartsWith(kk, "code") then type text
                         else if Text.StartsWith(kk, "num_pt") then type number
+                        else if Text.Contains(kk, "v") then type number
                         else type any,
 
                 TypePairs_Fields = List.Transform(fields, each { Text.From(_[Name]), KindToType(_[Kind]) }),

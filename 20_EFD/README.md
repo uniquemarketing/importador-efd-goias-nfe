@@ -10,28 +10,25 @@ Total de consultas extraidas:
 - 56 blocos `shared` convertidos para arquivos `.m` independentes.
 
 ## Estrutura
-- `200_Arquivos`: ingestao e staging
-- `210_Funções`: funcoes auxiliares e parser de tipos
-- `220_Layouts`: definicoes de layout por registro
-- `225_Meta`: catalogos de metadados e manifesto de migracao
-- `230_Extraídos`: tabelas base por registro
-- `235_Dimensoes`: tabelas dimensionais
-- `240_Diagnostico`: validacoes e diagnosticos
+- `200_Arquivos`: staging operacional ativo
+- `210_Funções`: funcoes auxiliares operacionais
+- `220_Layouts`: somente layouts ativos do nucleo minimo
+- `225_Meta`: catalogos de metadados especificos da EFD
+- `230_Extraídos`: somente bases ativas do nucleo minimo
+- `archive`: layouts, bases, diagnosticos e apoios congelados
 - `../00_Configuracoes/A_Funcoes_Compartilhadas`: funcoes compartilhadas entre modulos
-
-## Arquivos de Controle
-- `225_Meta/MIGRACAO_MANIFEST.csv`
-  - Mapeia nome original do legado para categoria e arquivo de destino.
+- `../00_Configuracoes/C_Auxiliares`: tabelas auxiliares hardcoded e dominios canonicos
+- `../00_Configuracoes/archive`: governanca e compatibilidade congeladas
+- `../30_MODELAGEM/archive_faseC`: modelagem preservada para retomada futura
 
 ## Ordem Recomendada de Importacao no Power Query
 1. `00_Configuracoes/A_Funcoes_Compartilhadas`
-2. `225_Meta`
-3. `210_Funções`
-4. `220_Layouts`
-5. `200_Arquivos`
-6. `230_Extraídos`
-7. `235_Dimensoes`
-8. `240_Diagnostico`
+2. `00_Configuracoes/C_Auxiliares`
+3. `225_Meta`
+4. `210_Funções`
+5. `220_Layouts`
+6. `200_Arquivos`
+7. `230_Extraídos`
 
 Essa ordem evita referencias quebradas durante a carga inicial.
 
@@ -52,6 +49,6 @@ Caracteristicas principais:
 - `NOVO_META` foi consolidada e nao deve ser usada como consulta separada.
 
 ## Observacoes
-- A pasta `20_EFD` foi preparada para evolucao incremental.
-- Diagnosticos podem ser habilitados/desabilitados sem impactar ingestao.
+- O workbook principal deve importar apenas o nucleo ativo.
+- Conteudos em pastas `archive` devem permanecer fora do workbook principal, salvo necessidade pontual de desenvolvimento.
 - Para alto volume, prefira carregar tabelas grandes no Modelo de Dados (Power Pivot), evitando limites de planilha.

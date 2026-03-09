@@ -39,9 +39,9 @@
                 null
             else
                 let
-                    n1 = try Number.FromText(txt, "en-US") otherwise null,
-                    norm = if n1 <> null then null else fnNormalizeDecimalText(txt),
-                    n2 = if n1 <> null then n1 else try Number.FromText(norm, "en-US") otherwise null
+                    norm = fnNormalizeDecimalText(txt),
+                    n1 = try Number.FromText(norm, "en-US") otherwise null,
+                    n2 = if n1 <> null then n1 else try Number.FromText(txt, "en-US") otherwise null
                 in
                     n2,
         fnToInt64 = (txt as nullable text) as nullable number =>

@@ -4,47 +4,47 @@
 Isolar o legado de auditoria EFD em consultas modulares, mantendo a logica funcional e evoluindo o motor de tipagem (`fnParseKind`) para cenarios NFe + SPED.
 
 ## Visao Geral
-A arquitetura foi organizada por camadas, separando ingestao, funcoes, metadados, layouts, extracao, dimensoes e diagnostico.
+A arquitetura foi reorganizada para um nucleo operacional leve no Excel, separando o que fica ativo do que fica congelado para retomada futura.
 
 ## Estrutura de Pastas
 - `20_EFD/200_Arquivos`
-  - Pipeline de ingestao e staging:
+  - Pipeline operacional ativo:
     - `EFD_Extraida`
-    - `EFD_TotalLinha`
-    - `Linhas_por_Arquivo`
-    - `SomenteProblemas`
 - `20_EFD/210_Funções`
-  - Funcoes reutilizaveis:
+  - Funcoes reutilizaveis ativas:
     - `fnSPEDTabela`
     - `fnExtraiRegistro`
     - `fnFinalDate`
     - `fnPeriodo`
-    - validadores auxiliares
 - `00_Configuracoes/A_Funcoes_Compartilhadas`
   - Funcoes compartilhadas entre modulos:
     - `fnParseKind` (motor unico de tipagem)
+    - `fxAux_*`
 - `20_EFD/220_Layouts`
-  - Contratos de layout por registro (`Layout_*`)
+  - Somente layouts ativos do nucleo minimo
 - `20_EFD/225_Meta`
-  - Catalogos de metadados e schema:
+  - Catalogos de metadados ativos:
     - `Meta_Registros`
     - `Layouts_Index`
-    - `schemaAuxiliares`
-  - Manifesto da migracao:
-    - `MIGRACAO_MANIFEST.csv`
+- `00_Configuracoes/C_Auxiliares`
+  - Tabelas auxiliares hardcoded e dominios canonicos:
+    - `tb_*`
+    - `dim_*`
 - `20_EFD/230_Extraídos`
-  - Tabelas base por registro (`R*_base`, `RC100_base`)
-- `20_EFD/235_Dimensoes`
-  - Dimensoes derivadas (`tb_*`)
-- `20_EFD/240_Diagnostico`
-  - Controles de qualidade e diagnostico (`Diag_*`, `QA_*`)
+  - Somente bases ativas do nucleo minimo
+- `20_EFD/archive`
+  - Layouts, bases, diagnosticos e apoios congelados
+- `00_Configuracoes/archive`
+  - Schemas de governanca e compatibilidade congelados
+- `30_MODELAGEM/archive_faseC`
+  - Modelagem preservada para retomada segura
 
 ## Fluxo de Dados
 1. `EFD_Extraida` usa `fnSPEDTabela` para leitura e normalizacao dos arquivos TXT SPED.
 2. `fnExtraiRegistro` aplica `Layouts_Index` + `Layout_*` sobre `EFD_Extraida`.
-3. Consultas `R*_base` materializam registros por tipo.
-4. Consultas `tb_*` consolidam dimensoes para analise.
-5. Consultas de `Diag_*` e `QA_*` validam qualidade e consistencia.
+3. Consultas `R*_base` ativas materializam somente os registros do nucleo operacional.
+4. Consultas auxiliares `tb_*` e `dim_*` em `00_Configuracoes/C_Auxiliares` materializam dominios compartilhados sem dependencias externas em tempo de atualizacao.
+5. Conteudos em `archive` ficam fora do workbook principal e so retornam quando houver necessidade real.
 
 ## Motor de Tipagem (fnParseKind)
 `fnParseKind` foi consolidada em `00_Configuracoes/A_Funcoes_Compartilhadas/fnParseKind.m` e usada por NFe + EFD:

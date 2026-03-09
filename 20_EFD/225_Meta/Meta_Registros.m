@@ -15,24 +15,24 @@ let
             // =====================
         {
             {"0000", 0, "0", null,  "Abertura do Arquivo Digital e Identificação da entidade", "1", true},
-            {"0001", 1, "0", "0000","Abertura do Bloco 0", "1",   true},
-            {"0002", 2, "0", "0001","Classificação do Estabelecimento Industrial ou Equiparado a Industrial", "1", true},
+            {"0001", 1, "0", "0000","Abertura do Bloco 0", "1",   false},
+            {"0002", 2, "0", "0001","Classificação do Estabelecimento Industrial ou Equiparado a Industrial", "1", false},
             {"0005", 2, "0", "0001","Dados Complementares da entidade",  "1", false},
-            {"0015", 2, "0", "0001","Dados do Contribuinte Substituto ou Responsável pelo ICMS Destino", "V", true},
+            {"0015", 2, "0", "0001","Dados do Contribuinte Substituto ou Responsável pelo ICMS Destino", "V", false},
             {"0100", 2, "0", "0001","Dados do Contabilista", "1", false},
             {"0150", 2, "0", "0001","Tabela de Cadastro do Participante", "V", true},
             {"0175", 3, "0", "0150","Alteração da Tabela de Cadastro de Participante", "1:N", true},
-            {"0190", 2, "0", "0001","Identificação das unidades de medida", "V", true},
-            {"0200", 2, "0", "0001","Tabela de Identificação do Item (Produtos e Serviços)", "V", true},
-            {"0205", 3, "0", "0200","Alteração do Item", "1:N", true},
+            {"0190", 2, "0", "0001","Identificação das unidades de medida", "V", false},
+            {"0200", 2, "0", "0001","Tabela de Identificação do Item (Produtos e Serviços)", "V", false},
+            {"0205", 3, "0", "0200","Alteração do Item", "1:N", false},
             {"0206", 3, "0", "0200","Código do produto conforme Tabela ANP", "1:1", false},
             {"0210", 3, "0", "0200","Consumo Específico Padronizado", "1:N", false},
-            {"0220", 3, "0", "0200","Fatores de Conversão de Unidades", "1:N", true},
-            {"0221", 3, "0", "0200","Correlação entre códigos de itens comercializados", "1:N", true},
-            {"0300", 2, "0", "0001","Cadastro de bens ou componentes do Ativo Imobilizado", "V", true},
-            {"0305", 3, "0", "0300","Informação sobre a Utilização do Bem", "1:1", true},
-            {"0400", 2, "0", "0001","Tabela de Natureza da Operação/ Prestação", "V", true},
-            {"0450", 2, "0", "0001","Tabela de Informação Complementar do documento fiscal",  "V", true},
+            {"0220", 3, "0", "0200","Fatores de Conversão de Unidades", "1:N", false},
+            {"0221", 3, "0", "0200","Correlação entre códigos de itens comercializados", "1:N", false},
+            {"0300", 2, "0", "0001","Cadastro de bens ou componentes do Ativo Imobilizado", "V", false},
+            {"0305", 3, "0", "0300","Informação sobre a Utilização do Bem", "1:1", false},
+            {"0400", 2, "0", "0001","Tabela de Natureza da Operação/ Prestação", "V", false},
+            {"0450", 2, "0", "0001","Tabela de Informação Complementar do documento fiscal",  "V", false},
             {"0460", 2, "0", "0001","Tabela de Observações do Lançamento Fiscal", "V", true},
             {"0500", 2, "0", "0001","Plano de contas contábeis", "V", false},
             {"0600", 2, "0", "0001","Centro de custos", "V", false},
@@ -60,20 +60,20 @@ let
             // Bloco C
             // =====================
 
-            {"C001", 1, "C", "0000", "Abertura do Bloco C", "1", true},
+            {"C001", 1, "C", "0000", "Abertura do Bloco C", "1", false},
             {"C100", 2, "C", "C001", "Documento - Nota Fiscal (código 01), Nota Fiscal Avulsa (código 1B), Nota Fiscal de Produtor (código 04), Nota Fiscal Eletrônica (código 55) e Nota Fiscal Eletrônica para Consumidor Final (código 65)", "V", true},
 
             {"C101", 3, "C", "C100", "Informação complementar dos documentos fiscais quando das operações interestaduais destinadas a consumidor final não contribuinte EC 87/15 (código 55)", "1:1", true},
             {"C105", 3, "C", "C100", "Operações com ICMS ST recolhido para UF diversa da destinatária do documento fiscal (Código 55)", "1:1", true},
-            {"C110", 3, "C", "C100", "Complemento do Documento - Informação Complementar da Nota Fiscal (código 01, 1B, 55)", "1:N", true},
-            {"C111", 4, "C", "C110", "Complemento do Documento - Processo referido", "1:N", true},
-            {"C112", 4, "C", "C110", "Complemento do Documento - Documento de Arrecadação Referenciado", "1:N", true},
-            {"C113", 4, "C", "C110", "Complemento do Documento - Documento Fiscal Referenciado", "1:N", true},
-            {"C114", 4, "C", "C110", "Complemento do Documento - Cupom Fiscal Referenciado", "1:N", true},
+            {"C110", 3, "C", "C100", "Complemento do Documento - Informação Complementar da Nota Fiscal (código 01, 1B, 55)", "1:N", false},
+            {"C111", 4, "C", "C110", "Complemento do Documento - Processo referido", "1:N", false},
+            {"C112", 4, "C", "C110", "Complemento do Documento - Documento de Arrecadação Referenciado", "1:N", false},
+            {"C113", 4, "C", "C110", "Complemento do Documento - Documento Fiscal Referenciado", "1:N", false},
+            {"C114", 4, "C", "C110", "Complemento do Documento - Cupom Fiscal Referenciado", "1:N", false},
             {"C115", 4, "C", "C110", "Local de coleta e/ou entrega (CÓDIGOS 01, 1B e 04)", "1:N", false},
-            {"C116", 4, "C", "C110", "Cupom Fiscal Eletrônico - CF-e referenciado", "1:N", true},
+            {"C116", 4, "C", "C110", "Cupom Fiscal Eletrônico - CF-e referenciado", "1:N", false},
 
-            {"C120", 3, "C", "C100", "Complemento do Documento - Operações de Importação (código 01 e 55)", "1:N", true},
+            {"C120", 3, "C", "C100", "Complemento do Documento - Operações de Importação (código 01 e 55)", "1:N", false},
             {"C130", 3, "C", "C100", "Complemento do Documento - ISSQN, IRRF e Previdência Social", "1:1", false},
             {"C140", 3, "C", "C100", "Complemento do Documento - Fatura (código 01)", "1:N", false},
             {"C141", 4, "C", "C140", "Complemento do Documento - Vencimento da Fatura (código 01)", "1:1", false},
@@ -87,7 +87,7 @@ let
             {"C174", 4, "C", "C170", "Complemento de Item - Operações com Armas de Fogo (código 01)", "1:N", false},
             {"C175", 4, "C", "C170", "Complemento de Item - Operações com Veículos Novos (código 01,55)", "1:N", false},
             {"C176", 4, "C", "C170", "Complemento de Item - Ressarcimento de ICMS em operações com Substituição Tributária (código 01,55)", "1:N", true},
-            {"C177", 4, "C", "C170", "Complemento do Item – Outras informações (Cód. 01, 55) – (Válido a partir de 01/01/2019)", "1:1", true},
+            {"C177", 4, "C", "C170", "Complemento do Item – Outras informações (Cód. 01, 55) – (Válido a partir de 01/01/2019)", "1:1", false},
             {"C178", 4, "C", "C170", "Complemento do Item - Operações com Produtos Sujeitos a Tributação de IPI", "1:N", false},
             {"C179", 4, "C", "C170", "Complemento do Item - Informações Complementares ST (código 01)", "1:1", true},
 
@@ -96,20 +96,20 @@ let
             {"C185", 3, "C", "C100", "Informações complementares das operações de saída de mercadorias sujeitas à substituição tributária (código 01, 1B, 04 e 55)", "1:N", true},
             {"C186", 3, "C", "C100", "Informações complementares das operações de entrada de mercadorias sujeitas à substituição tributária (código 01, 1B, 04 e 55)", "1:N", true},
             {"C190", 3, "C", "C100", "Registro Analítico do Documento (código 01, 1B, 04, 55 e 65)", "1:N", true},
-            {"C191", 4, "C", "C190", "Informações do Fundo de Combate a Pobreza – FCP – na NF-e (Código 55)", "1:1", true},
+            {"C191", 4, "C", "C190", "Informações do Fundo de Combate a Pobreza – FCP – na NF-e (Código 55)", "1:1", false},
             {"C195", 3, "C", "C100", "Complemento do Registro Analítico - Observações do Lançamento Fiscal (código 01, 1B, 04 e 55)", "1:N", true},
             {"C197", 4, "C", "C195", "Outras Obrigações Tributárias, Ajustes e Informações provenientes de Documento Fiscal", "1:N", true},
 
-            {"C300", 2, "C", "C001", "Documento - Resumo Diário das Notas Fiscais de Venda a Consumidor (código 02)", "V", true},
-            {"C310", 3, "C", "C300", "Documentos Cancelados de Nota Fiscal de Venda a Consumidor (código 02)", "1:N", true},
-            {"C320", 3, "C", "C300", "Registro Analítico das Notas Fiscais de Venda a Consumidor (código 02)", "1:N", true},
-            {"C321", 4, "C", "C320", "Itens dos Resumos Diários dos Documentos (código 02)", "1:N", true},
-            {"C330", 5, "C", "C321", "Informações complementares das operações de saída de mercadorias sujeitas à substituição tributária (código 02)", "1:1", true},
+            {"C300", 2, "C", "C001", "Documento - Resumo Diário das Notas Fiscais de Venda a Consumidor (código 02)", "V", false},
+            {"C310", 3, "C", "C300", "Documentos Cancelados de Nota Fiscal de Venda a Consumidor (código 02)", "1:N", false},
+            {"C320", 3, "C", "C300", "Registro Analítico das Notas Fiscais de Venda a Consumidor (código 02)", "1:N", false},
+            {"C321", 4, "C", "C320", "Itens dos Resumos Diários dos Documentos (código 02)", "1:N", false},
+            {"C330", 5, "C", "C321", "Informações complementares das operações de saída de mercadorias sujeitas à substituição tributária (código 02)", "1:1", false},
 
-            {"C350", 2, "C", "C001", "Nota Fiscal de venda a consumidor (código 02)", "V", true},
-            {"C370", 3, "C", "C350", "Itens do documento (código 02)", "1:N", true},
-            {"C380", 4, "C", "C370", "Informações complementares das operações de saída de mercadorias sujeitas à substituição tributária (código 02)", "1:N", true},
-            {"C390", 3, "C", "C350", "Registro Analítico das Notas Fiscais de Venda a Consumidor (código 02)", "1:N", true},
+            {"C350", 2, "C", "C001", "Nota Fiscal de venda a consumidor (código 02)", "V", false},
+            {"C370", 3, "C", "C350", "Itens do documento (código 02)", "1:N", false},
+            {"C380", 4, "C", "C370", "Informações complementares das operações de saída de mercadorias sujeitas à substituição tributária (código 02)", "1:N", false},
+            {"C390", 3, "C", "C350", "Registro Analítico das Notas Fiscais de Venda a Consumidor (código 02)", "1:N", false},
 
             {"C400", 2, "C", "C001", "Equipamento ECF (códigos 02, 2D e 60)", "V", false},
             {"C405", 3, "C", "C400", "Redução Z (código 02, 2D e 60)", "3", false},
@@ -219,7 +219,7 @@ let
             // Bloco E
             // =====================
 
-            {"E001", 1, "E", "0000", "Abertura do Bloco E", "1", true},
+            {"E001", 1, "E", "0000", "Abertura do Bloco E", "1", false},
 
             {"E100", 2, "E", "E001", "Período de Apuração do ICMS", "V", true},
             {"E110", 3, "E", "E100", "Apuração do ICMS - Operações Próprias", "1:1", true},
@@ -254,22 +254,22 @@ let
             // =====================
             // Bloco G
             // =====================
-            {"G001", 1, "G", "0000", "Abertura do Bloco G", "1", true},
-            {"G110", 2, "G", "G001", "ICMS – Ativo Permanente – CIAP", "V", true},
-            {"G125", 3, "G", "G110", "Movimentação de Bem do Ativo Imobilizado", "1:N", true},
-            {"G126", 4, "G", "G125", "Outros créditos CIAP", "1:N", true},
-            {"G130", 4, "G", "G125", "Identificação do documento fiscal", "1:N", true},
-            {"G140", 5, "G", "G130", "Identificação do item do documento fiscal", "1:N", true},
+            {"G001", 1, "G", "0000", "Abertura do Bloco G", "1", false},
+            {"G110", 2, "G", "G001", "ICMS – Ativo Permanente – CIAP", "V", false},
+            {"G125", 3, "G", "G110", "Movimentação de Bem do Ativo Imobilizado", "1:N", false},
+            {"G126", 4, "G", "G125", "Outros créditos CIAP", "1:N", false},
+            {"G130", 4, "G", "G125", "Identificação do documento fiscal", "1:N", false},
+            {"G140", 5, "G", "G130", "Identificação do item do documento fiscal", "1:N", false},
             {"G990", 1, "G", "0000", "Encerramento do Bloco G", "1", false},
 
             // =====================
             // Bloco H
             // =====================
-            {"H001", 1, "H", "0000", "Abertura do Bloco H", "1", true},
-            {"H005", 2, "H", "H001", "Totais do Inventário", "V", true},
-            {"H010", 3, "H", "H005", "Inventário", "1:N", true},
-            {"H020", 4, "H", "H010", "Informação complementar do Inventário", "1:N", true},
-            {"H030", 4, "H", "H010", "Informações complementares do inventário das mercadorias sujeitas ao regime de substituição tributária", "1:1", true},
+            {"H001", 1, "H", "0000", "Abertura do Bloco H", "1", false},
+            {"H005", 2, "H", "H001", "Totais do Inventário", "V", false},
+            {"H010", 3, "H", "H005", "Inventário", "1:N", false},
+            {"H020", 4, "H", "H010", "Informação complementar do Inventário", "1:N", false},
+            {"H030", 4, "H", "H010", "Informações complementares do inventário das mercadorias sujeitas ao regime de substituição tributária", "1:1", false},
             {"H990", 1, "H", "0000", "Encerramento do Bloco H", "1", false},
 
             // =====================
@@ -312,10 +312,10 @@ let
             // =====================
             // Bloco L
             // =====================
-            {"L001", 1, "L", "0000", "Abertura do Bloco L", "1", true},
-            {"L100", 2, "L", "L001", "Identificação dos Períodos de Apuração do ICMS", "V", true},
-            {"L200", 3, "L", "L100", "Crédito de ICMS do Ativo Permanente – CIAP – Controle por Documento Fiscal", "1:N", true},
-            {"L210", 4, "L", "L200", "Controle do Crédito de ICMS do Ativo Permanente – CIAP", "1:N", true},
+            {"L001", 1, "L", "0000", "Abertura do Bloco L", "1", false},
+            {"L100", 2, "L", "L001", "Identificação dos Períodos de Apuração do ICMS", "V", false},
+            {"L200", 3, "L", "L100", "Crédito de ICMS do Ativo Permanente – CIAP – Controle por Documento Fiscal", "1:N", false},
+            {"L210", 4, "L", "L200", "Controle do Crédito de ICMS do Ativo Permanente – CIAP", "1:N", false},
             {"L990", 1, "L", "0000", "Encerramento do Bloco L", "1", false},
 
             // =====================
