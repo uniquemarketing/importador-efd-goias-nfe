@@ -6,7 +6,7 @@ let
     CamposICMS = LayoutProd[ICMS_Layout],
     // Monta a lista de nomes que o Power Pivot espera ver
     ColunasParaExpandir = List.Distinct(
-        {"Chave de Acesso"}
+        {"Chave de Acesso", "Chave_Acesso_44"}
             & List.Transform(CamposProd, each _[Alias])
             & List.Transform(DerivadosProd, each _[Name])
             & List.Transform(CamposICMS, each _[Alias])
@@ -33,6 +33,10 @@ let
                             try fnParseKind(null, _[Kind], "type") otherwise type any
                         }
                 ),
+                {
+                    {"Chave de Acesso", fnParseKind(null, "text", "type")},
+                    {"Chave_Acesso_44", fnParseKind(null, "text", "type")}
+                },
                 {{"Tag de Origem ICMS", fnParseKind(null, "text", "type")}}
             }
         )
