@@ -1,4 +1,7 @@
 let
+    // OTI-5 (alto risco): materializa toda a tabela para tentar reduzir reavaliações.
+    // Se houver aumento de memória ou piora de UI, voltar para false.
+    AtivarBufferOTI5 = true,
     Source = #"102_NFE_Arquivos",
     Base = Table.SelectColumns(Source, {"PastaTipo", "Name", "FullPath", "TipoArquivo", "dhEmi", "nfe_id"}),
     LayoutBase = LAYOUT_NFE_BASE,
@@ -20,6 +23,7 @@ let
         each fnNFeProcessarXmlTable([XmlTable]),
         type table
     ),
-    Resultado = Table.RemoveColumns(AddConteudoProcessado, {"XmlTable"})
+    ResultadoSemXml = Table.RemoveColumns(AddConteudoProcessado, {"XmlTable"}),
+    Resultado = if AtivarBufferOTI5 then Table.Buffer(ResultadoSemXml) else ResultadoSemXml
 in
     Resultado

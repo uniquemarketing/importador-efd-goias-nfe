@@ -17,18 +17,12 @@ let
         type text
     ),
     SemDuplicadas = Table.Distinct(ChaveRef, {"Chave_Acesso_Ref"}),
-    RegrasTipo = List.Transform(
-        CamposBase & DerivadosBase,
-        each
-            {
-                if _[Alias]? <> null then _[Alias] else _[Name],
-                try fnParseKind(null, _[Kind], "type") otherwise type any
-            }
-    ),
-    TabelaTipada =
-        if List.IsEmpty(RegrasTipo) then
-            SemDuplicadas
-        else
-            Table.TransformColumnTypes(SemDuplicadas, RegrasTipo)
+    ParesTipoCampos = List.Transform(CamposBase, each {_[Alias], fnParseKind(null, _[Kind], "type")}),
+    ParesTipoDerivados = List.Transform(DerivadosBase, each {_[Name], fnParseKind(null, _[Kind], "type")}),
+    ParesTipoFixos = {{"Chave_Acesso_Ref", type text}},
+    RegrasTipo = List.Distinct(List.Combine({ParesTipoFixos, ParesTipoCampos, ParesTipoDerivados})),
+    ColunasAtuais = Table.ColumnNames(SemDuplicadas),
+    RegrasTipoAtivas = List.Select(RegrasTipo, each List.Contains(ColunasAtuais, _{0})),
+    Tipada = Table.TransformColumnTypes(SemDuplicadas, RegrasTipoAtivas, "pt-BR")
 in
-    TabelaTipada
+    Tipada
