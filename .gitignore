@@ -1,0 +1,8 @@
+# Keep local workbook artifacts out of Git
+/EXCEL/*
+!/EXCEL/.gitkeep
+
+# Local/temporary extraction artifacts
+/.tmp_xlsx/
+/.tmp_Importador_1.3.1.zip
+/.tmp_pq_workbook_report.json

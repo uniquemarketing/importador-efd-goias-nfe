@@ -1,14 +1,22 @@
 let
-    source = #"102_NFE_Arquivos",
-    ContratoBase = NFE_Contrato_Ativo_BASE,
-    CamposBase = ContratoBase[Fields],
-    DerivadosBase = Record.FieldOrDefault(ContratoBase, "Derivados", {}),
+    source = #"NFE_Processado_Base",
+    LayoutBase = LAYOUT_NFE_BASE,
+    CamposBase = LayoutBase[Fields],
+    DerivadosBase = Record.FieldOrDefault(LayoutBase, "Derivados", {}),
     TodasColunas = List.Transform(CamposBase, each _[Alias]) & List.Transform(DerivadosBase, each _[Name]),
-    AddConteudoBase = Table.AddColumn(
-        source, "ConteudoBase", each fnNFeProcessarTotaisXmlTable([XmlTable], ContratoBase), type record
+    Expandir = Table.ExpandRecordColumn(source, "ConteudoBase", TodasColunas, TodasColunas),
+    ChaveRef = Table.AddColumn(
+        Expandir,
+        "Chave_Acesso_Ref",
+        each
+            let
+                chave44 = try Text.Trim(Text.From([Chave_Acesso_44])) otherwise null,
+                chave = try Text.Trim(Text.From([Chave de Acesso])) otherwise null
+            in
+                if chave44 <> null and chave44 <> "" then chave44 else chave,
+        type text
     ),
-    Expandir = Table.ExpandRecordColumn(AddConteudoBase, "ConteudoBase", TodasColunas, TodasColunas),
-    SemDuplicadas = Table.Distinct(Expandir, {"Chave de Acesso"}),
+    SemDuplicadas = Table.Distinct(ChaveRef, {"Chave_Acesso_Ref"}),
     RegrasTipo = List.Transform(
         CamposBase & DerivadosBase,
         each
@@ -17,6 +25,10 @@ let
                 try fnParseKind(null, _[Kind], "type") otherwise type any
             }
     ),
-    TabelaTipada = if List.IsEmpty(RegrasTipo) then SemDuplicadas else Table.TransformColumnTypes(SemDuplicadas, RegrasTipo)
+    TabelaTipada =
+        if List.IsEmpty(RegrasTipo) then
+            SemDuplicadas
+        else
+            Table.TransformColumnTypes(SemDuplicadas, RegrasTipo)
 in
     TabelaTipada

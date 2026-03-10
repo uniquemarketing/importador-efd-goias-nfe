@@ -7,89 +7,92 @@ let
         Multiplicidade = "1:N",
         RootPath = {"NFe", "infNFe", "det"},
         Fields = {
-            // ====== CHAVES / IDENTIFICAÇÃO DO ITEM ======
+            // Identificacao do item
             Field("nItem", "Item", {"Attribute:nItem"}, "text"),
-            // ====== PRODUTO (auditável) ======
-            Field("cProd", "Código Produto", {"prod", "cProd"}, "text"),
-            Field("cEAN", "EAN", {"prod", "cEAN"}, "text"),
-            Field("xProd", "Descrição", {"prod", "xProd"}, "text"),
-            Field("NCM", "NCM", {"prod", "NCM"}, "text"),
-            Field("CEST", "CEST", {"prod", "CEST"}, "text"),
-            Field("indEscala", "Ind Escala", {"prod", "indEscala"}, "text"),
-            Field("CFOP", "CFOP", {"prod", "CFOP"}, "text"),
-            Field("uCom", "Unidade Comercial", {"prod", "uCom"}, "text"),
-            Field("qCom", "Qtd Comercial", {"prod", "qCom"}, "11v0-4"),
-            Field("vUnCom", "Vlr Unit Comercial", {"prod", "vUnCom"}, "11v0-10"),
-            Field("vProd", "Valor Total Bruto", {"prod", "vProd"}, "13v2"),
-            Field("cEANTrib", "EAN Trib", {"prod", "cEANTrib"}, "text"),
-            Field("uTrib", "Unidade Trib", {"prod", "uTrib"}, "text"),
-            Field("qTrib", "Qtd Trib", {"prod", "qTrib"}, "11v0-4"),
-            Field("vUnTrib", "Vlr Unit Trib", {"prod", "vUnTrib"}, "11v0-10"),
-            Field("vFrete", "Vlr Frete", {"prod", "vFrete"}, "13v2"),
-            Field("vSeg", "Vlr Seguro", {"prod", "vSeg"}, "13v2"),
-            Field("vDesc", "Vlr Desconto", {"prod", "vDesc"}, "13v2"),
-            Field("vOutro", "Vlr Outros", {"prod", "vOutro"}, "13v2"),
-            // ====== ICMS UF DESTINO (DIFAL / EC 87) ======
-            Field("vBCUFDest", "BC ICMS UF Destino", {"imposto", "ICMSUFDest", "vBCUFDest"}, "13v2"),
-            Field("vBCFCPUFDest", "BC FCP UF Destino", {"imposto", "ICMSUFDest", "vBCFCPUFDest"}, "13v2"),
-            Field("pFCPUFDest", "Perc FCP Destino", {"imposto", "ICMSUFDest", "pFCPUFDest"}, "3v2-4"),
-            Field("pICMSUFDest", "Aliq Interna Destino", {"imposto", "ICMSUFDest", "pICMSUFDest"}, "3v2-4"),
-            Field("pICMSInter", "Aliq Interestadual", {"imposto", "ICMSUFDest", "pICMSInter"}, "3v2-4"),
-            Field("pICMSInterPart", "Perc Partilha Destino", {"imposto", "ICMSUFDest", "pICMSInterPart"}, "3v2-4"),
-            Field("vFCPUFDest", "Valor FCP Destino", {"imposto", "ICMSUFDest", "vFCPUFDest"}, "13v2"),
-            Field("vICMSUFDest", "Valor ICMS UF Destino", {"imposto", "ICMSUFDest", "vICMSUFDest"}, "13v2"),
-            Field("vICMSUFRemet", "Valor ICMS UF Remet", {"imposto", "ICMSUFDest", "vICMSUFRemet"}, "13v2"),
-            // ====== IPI ======
-            Field("cEnq", "Cod Enquadramento IPI", {"imposto", "IPI", "cEnq"}, "text"),
-            Field("CST_IPI", "CST IPI", {"imposto", "IPI", "IPITrib", "CST"}, "text"),
-            Field("vIPI", "Valor IPI Trib", {"imposto", "IPI", "IPITrib", "vIPI"}, "13v2"),
-            Field("vIPI_Outros", "Valor IPI Outros", {"imposto", "IPI", "IPIOutr", "vIPI"}, "13v2")
+            // Produto/mercadoria
+            Field("cProd", "Prod_cProd", {"prod", "cProd"}, "text"),
+            Field("xProd", "Prod_xProd", {"prod", "xProd"}, "text"),
+            Field("NCM", "Prod_NCM", {"prod", "NCM"}, "text"),
+            Field("CEST", "Prod_CEST", {"prod", "CEST"}, "text"),
+            Field("CFOP", "Prod_CFOP", {"prod", "CFOP"}, "code4"),
+            Field("cEAN", "Prod_cEAN", {"prod", "cEAN"}, "text"),
+            Field("uCom", "Prod_uCom", {"prod", "uCom"}, "text"),
+            Field("qCom", "Prod_qCom", {"prod", "qCom"}, "11v0-4"),
+            Field("vUnCom", "Prod_vUnCom", {"prod", "vUnCom"}, "11v0-10"),
+            Field("vProd", "Prod_vProd", {"prod", "vProd"}, "13v2"),
+            Field("uTrib", "Prod_uTrib", {"prod", "uTrib"}, "text"),
+            Field("qTrib", "Prod_qTrib", {"prod", "qTrib"}, "11v0-4"),
+            Field("vUnTrib", "Prod_vUnTrib", {"prod", "vUnTrib"}, "11v0-10"),
+            Field("vFrete", "Prod_vFrete", {"prod", "vFrete"}, "13v2"),
+            Field("vSeg", "Prod_vSeg", {"prod", "vSeg"}, "13v2"),
+            Field("vDesc", "Prod_vDesc", {"prod", "vDesc"}, "13v2"),
+            Field("vOutro", "Prod_vOutro", {"prod", "vOutro"}, "13v2"),
+            // DIFAL/FCP por item
+            Field("vBCUFDest", "Difal_vBCUFDest", {"imposto", "ICMSUFDest", "vBCUFDest"}, "13v2"),
+            Field("vBCFCPUFDest", "Difal_vBCFCPUFDest", {"imposto", "ICMSUFDest", "vBCFCPUFDest"}, "13v2"),
+            Field("pFCPUFDest", "Difal_pFCPUFDest", {"imposto", "ICMSUFDest", "pFCPUFDest"}, "3v2-4"),
+            Field("pICMSUFDest", "Difal_pICMSUFDest", {"imposto", "ICMSUFDest", "pICMSUFDest"}, "3v2-4"),
+            Field("pICMSInter", "Difal_pICMSInter", {"imposto", "ICMSUFDest", "pICMSInter"}, "3v2-4"),
+            Field("pICMSInterPart", "Difal_pICMSInterPart", {"imposto", "ICMSUFDest", "pICMSInterPart"}, "3v2-4"),
+            Field("vFCPUFDest", "Difal_vFCPUFDest", {"imposto", "ICMSUFDest", "vFCPUFDest"}, "13v2"),
+            Field("vICMSUFDest", "Difal_vICMSUFDest", {"imposto", "ICMSUFDest", "vICMSUFDest"}, "13v2"),
+            Field("vICMSUFRemet", "Difal_vICMSUFRemet", {"imposto", "ICMSUFDest", "vICMSUFRemet"}, "13v2"),
+            // IPI por item
+            Field("cEnq", "IPI_cEnq", {"imposto", "IPI", "cEnq"}, "text"),
+            Field("CST", "IPI_CST_Trib", {"imposto", "IPI", "IPITrib", "CST"}, "code2"),
+            Field("CST", "IPI_CST_Outr", {"imposto", "IPI", "IPIOutr", "CST"}, "code2"),
+            Field("vBC", "IPI_vBC", {"imposto", "IPI", "IPITrib", "vBC"}, "13v2"),
+            Field("pIPI", "IPI_pIPI", {"imposto", "IPI", "IPITrib", "pIPI"}, "3v2-4"),
+            Field("vIPI", "IPI_vIPI_Trib", {"imposto", "IPI", "IPITrib", "vIPI"}, "13v2"),
+            Field("vIPI", "IPI_vIPI_Outr", {"imposto", "IPI", "IPIOutr", "vIPI"}, "13v2")
         },
         Derivados = {
             Deriv(
-                "Produto Brinde",
+                "Prod_Brinde",
                 "text",
                 (r as record) =>
                     let
-                        valor = Record.FieldOrDefault(r, "Valor Total Bruto", null)
+                        valor = Record.FieldOrDefault(r, "Prod_vProd", null)
                     in
-                        if valor = 0 then
+                        if valor = null then
+                            null
+                        else if valor = 0 then
                             "Sim"
                         else
                             "Não"
             )
         },
-        // ====== ICMS DINÂMICO (Caixa única por Tag ativa) ======
+        // ICMS dinamico por item
         ICMS_Layout = {
-            Field("orig", "Origem Mercadoria", {}, "text"),
-            Field("CST", "CST ICMS", {}, "text"),
-            Field("CSOSN", "CSOSN ICMS", {}, "text"),
-            Field("modBC", "Modalidade BC ICMS", {}, "text"),
-            Field("pRedBC", "Percentual Redução BC ICMS", {}, "3v2-4"),
-            Field("vBC", "Base Cálculo ICMS", {}, "13v2"),
-            Field("pICMS", "Alíquota ICMS", {}, "3v2-4"),
-            Field("vICMS", "Valor ICMS", {}, "13v2"),
-            Field("modBCST", "Modalidade BC ST", {}, "text"),
-            Field("pMVAST", "Percentual MVA BC ST", {}, "3v2-4"),
-            Field("pRedBCST", "Percentual Redução BC ST", {}, "3v2-4"),
-            Field("vBCST", "Base Cálculo ST", {}, "13v2"),
-            Field("pICMSST", "Alíquota ST", {}, "3v2-4"),
-            Field("vICMSST", "Valor ST", {}, "13v2"),
-            Field("pFCP", "Percentual FCP", {}, "3v2-4"),
-            Field("vFCP", "Valor FCP", {}, "13v2"),
-            Field("vBCFCP", "Base Cálculo FCP", {}, "13v2"),
-            Field("vBCFCPST", "Base Cálculo FCP ST", {}, "13v2"),
-            Field("pFCPST", "Percentual FCP ST", {}, "3v2-4"),
-            Field("vFCPST", "Valor FCP ST", {}, "13v2"),
-            Field("vICMSOp", "Valor ICMS Operação", {}, "13v2"),
-            Field("pDif", "Percentual Diferimento ICMS", {}, "3v2-4"),
-            Field("vICMSDif", "Valor do ICMS Diferido", {}, "13v2"),
-            Field("pBCOp", "Percentual BC Op Própria", {}, "3v2-4"),
-            Field("UFST", "UF ST", {}, "text"),
-            Field("pCredSN", "Percentual Crédito SN", {}, "3v2-4"),
-            Field("vCredICMSSN", "Valor Crédito SN", {}, "13v2"),
-            Field("vBCSTDest", "Base Cálculo ST Destino", {}, "13v2"),
-            Field("vICMSSTDest", "Valor ICMS ST UF de Destino", {}, "13v2")
+            Field("orig", "ICMS_orig", {}, "text"),
+            Field("CST", "ICMS_CST", {}, "text"),
+            Field("CSOSN", "ICMS_CSOSN", {}, "text"),
+            Field("modBC", "ICMS_modBC", {}, "text"),
+            Field("pRedBC", "ICMS_pRedBC", {}, "3v2-4"),
+            Field("vBC", "ICMS_vBC", {}, "13v2"),
+            Field("pICMS", "ICMS_pICMS", {}, "3v2-4"),
+            Field("vICMS", "ICMS_vICMS", {}, "13v2"),
+            Field("modBCST", "ICMSST_modBCST", {}, "text"),
+            Field("pMVAST", "ICMSST_pMVAST", {}, "3v2-4"),
+            Field("pRedBCST", "ICMSST_pRedBCST", {}, "3v2-4"),
+            Field("vBCST", "ICMSST_vBCST", {}, "13v2"),
+            Field("pICMSST", "ICMSST_pICMSST", {}, "3v2-4"),
+            Field("vICMSST", "ICMSST_vICMSST", {}, "13v2"),
+            Field("pFCP", "ICMS_pFCP", {}, "3v2-4"),
+            Field("vFCP", "ICMS_vFCP", {}, "13v2"),
+            Field("vBCFCP", "ICMS_vBCFCP", {}, "13v2"),
+            Field("vBCFCPST", "ICMSST_vBCFCPST", {}, "13v2"),
+            Field("pFCPST", "ICMSST_pFCPST", {}, "3v2-4"),
+            Field("vFCPST", "ICMSST_vFCPST", {}, "13v2"),
+            Field("vICMSOp", "ICMS_vICMSOp", {}, "13v2"),
+            Field("pDif", "ICMS_pDif", {}, "3v2-4"),
+            Field("vICMSDif", "ICMS_vICMSDif", {}, "13v2"),
+            Field("pBCOp", "ICMS_pBCOp", {}, "3v2-4"),
+            Field("UFST", "ICMSST_UFST", {}, "text"),
+            Field("pCredSN", "ICMSSN_pCredSN", {}, "3v2-4"),
+            Field("vCredICMSSN", "ICMSSN_vCredICMSSN", {}, "13v2"),
+            Field("vBCSTDest", "ICMSST_vBCSTDest", {}, "13v2"),
+            Field("vICMSSTDest", "ICMSST_vICMSSTDest", {}, "13v2")
         }
     ]
 in

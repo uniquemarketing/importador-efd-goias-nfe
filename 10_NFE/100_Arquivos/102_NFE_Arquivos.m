@@ -1,34 +1,20 @@
 let
     Fonte = #"101_xml_Arquivos_All",
-    // Helper
-    fnDataEmitNfeFromXmlTable = (xmlTable as table) as nullable datetime =>
+    // Helper: extrai dhEmi/dEmi por leitura parcial de texto (evita Xml.Tables em massa aqui).
+    fnDataEmitNfeFromPath = (fullPath as text) as nullable datetime =>
         let
-            xmlRoot = try xmlTable{0} otherwise null,
-            ideNode = if xmlRoot = null then null else fnGetNestedValue(xmlRoot, {"NFe", "infNFe", "ide"}),
-            ideRec =
-                if ideNode = null then
-                    null
-                else if Value.Is(ideNode, type table) then
-                    try ideNode{0} otherwise null
-                else if Value.Is(ideNode, type record) then
-                    ideNode
-                else
-                    null,
+            bin = try File.Contents(fullPath) otherwise null,
+            headBin = if bin = null then null else try Binary.Range(bin, 0, 262144) otherwise null,
+            headTxtUtf8 = if headBin = null then null else try Text.FromBinary(headBin, TextEncoding.Utf8) otherwise null,
+            headTxtAnsi = if headTxtUtf8 = null and headBin <> null then try Text.FromBinary(headBin, 1252) otherwise null else headTxtUtf8,
+            txt = if headTxtAnsi = null then "" else headTxtAnsi,
             dhEmiTxt =
-                if ideRec = null then
-                    null
-                else
-                    let
-                        a = try fnGetNestedValue(ideRec, {"dhEmi"}) otherwise null,
-                        b = try fnGetNestedValue(ideRec, {"dEmi"}) otherwise null
-                    in
-                        if a <> null and Text.Trim(Text.From(a)) <> "" then
-                            Text.From(a)
-                        else if b <> null and Text.Trim(Text.From(b)) <> "" then
-                            Text.From(b)
-                        else
-                            null,
-            // Parse robusto: dhEmi costuma vir ISO com timezone.
+                let
+                    a = try Text.Trim(Text.BetweenDelimiters(txt, "<dhEmi>", "</dhEmi>")) otherwise null,
+                    b = try Text.Trim(Text.BetweenDelimiters(txt, "<dEmi>", "</dEmi>")) otherwise null
+                in
+                    if a <> null and a <> "" then a else if b <> null and b <> "" then b else null,
+            // Parse robusto: dhEmi costuma vir ISO com timezone; dEmi costuma vir date.
             dt =
                 try
                     if dhEmiTxt = null then
@@ -42,13 +28,7 @@ let
         in
             dt,
     Filtra = Table.SelectRows(Fonte, each (try [TipoArquivo] otherwise null) = "NFe"),
-    AddXmlTable = Table.AddColumn(
-        Filtra,
-        "XmlTable",
-        each try Xml.Tables(File.Contents([FullPath])) otherwise #table({}, {}),
-        type table
-    ),
-    AddDhEmi = Table.AddColumn(AddXmlTable, "dhEmi", each fnDataEmitNfeFromXmlTable([XmlTable]), type datetime),
+    AddDhEmi = Table.AddColumn(Filtra, "dhEmi", each fnDataEmitNfeFromPath([FullPath]), type datetime),
     // Ordenação fiscal: mais antiga primeiro
     Sort = Table.Sort(AddDhEmi, {{"dhEmi", Order.Ascending}, {"FullPath", Order.Ascending}}),
     // PK técnica cronológica

@@ -1,0 +1,55 @@
+let
+    Fonte = #table(
+        type table [
+            #"COD_MOD" = text,
+            #"DESC_MOD" = text,
+            #"INICIO" = date,
+            #"FIM" = nullable date
+        ],
+        {
+            {"01", "Nota Fiscal", #date(2009, 1, 1), null},
+            {"1B", "Nota Fiscal Avulsa", #date(2009, 1, 1), null},
+            {"02", "Nota Fiscal de Venda a Consumidor", #date(2009, 1, 1), null},
+            {"2D", "Cupom Fiscal emitido por ECF", #date(2009, 1, 1), null},
+            {"2E", "Bilhete de Passagem emitido por ECF", #date(2009, 1, 1), null},
+            {"04", "Nota Fiscal de Produtor", #date(2009, 1, 1), null},
+            {"06", "Nota Fiscal/Conta de Energia Elétrica", #date(2009, 1, 1), null},
+            {"07", "Nota Fiscal de Serviço de Transporte", #date(2009, 1, 1), null},
+            {"08", "Conhecimento de Transporte Rodoviário de Cargas", #date(2009, 1, 1), null},
+            {"8B", "Conhecimento de Transporte de Cargas Avulso", #date(2009, 1, 1), null},
+            {"09", "Conhecimento de Transporte Aquaviário de Cargas", #date(2009, 1, 1), null},
+            {"10", "Conhecimento Aéreo", #date(2009, 1, 1), null},
+            {"11", "Conhecimento de Transporte Ferroviário de Cargas", #date(2009, 1, 1), null},
+            {"13", "Bilhete de Passagem Rodoviário", #date(2009, 1, 1), null},
+            {"14", "Bilhete de Passagem Aquaviário", #date(2009, 1, 1), null},
+            {"15", "Bilhete de Passagem e Nota de Bagagem", #date(2009, 1, 1), null},
+            {"16", "Bilhete de Passagem Ferroviário", #date(2009, 1, 1), null},
+            {"17", "Despacho de Transporte", #date(2009, 1, 1), null},
+            {"18", "Resumo de Movimento Diário", #date(2009, 1, 1), null},
+            {"20", "Ordem de Coleta de Cargas", #date(2009, 1, 1), null},
+            {"21", "Nota Fiscal de Serviço de Comunicação", #date(2009, 1, 1), null},
+            {"22", "Nota Fiscal de Serviço de Telecomunicação", #date(2009, 1, 1), null},
+            {"23", "GNRE", #date(2009, 1, 1), null},
+            {"24", "Autorização de Carregamento e Transporte", #date(2009, 1, 1), null},
+            {"25", "Manifesto de Carga", #date(2009, 1, 1), null},
+            {"26", "Conhecimento de Transporte Multimodal de Cargas", #date(2009, 1, 1), null},
+            {"27", "Nota Fiscal de Transporte Ferroviário de Cargas", #date(2009, 1, 1), null},
+            {"28", "Nota Fiscal/Conta de Fornecimento de Gás Canalizado", #date(2009, 1, 1), null},
+            {"29", "Nota Fiscal/Conta de Fornecimento de Água Canalizada", #date(2009, 1, 1), null},
+            {"30", "Bilhete/Recibo do Passageiro", #date(2009, 1, 1), null},
+            {"55", "Nota Fiscal Eletrônica", #date(2009, 1, 1), null},
+            {"57", "Conhecimento de Transporte Eletrônico – CT-e", #date(2009, 1, 1), null},
+            {"59", "Cupom Fiscal Eletrônico – CF-e", #date(2011, 6, 1), null},
+            {"60", "Cupom Fiscal Eletrônico CF-e-ECF", #date(2013, 1, 1), null},
+            {"62", "Nota Fiscal Fatura Eletrônica de Serviços de Comunicação - NFCom", #date(2023, 6, 1), null},
+            {"63", "Bilhete de Passagem Eletrônico - BP-e", #date(2018, 1, 1), null},
+            {"65", "Nota Fiscal Eletrônica ao Consumidor Final – NFC-e", #date(2013, 10, 1), null},
+            {"65", "Nota Fiscal Eletrônica ao Consumidor Final – NFC-e", #date(2012, 10, 1), #date(2013, 9, 30)},
+            {"66", "Nota Fiscal de Energia Elétrica Eletrônica - NF3e", #date(2020, 1, 1), null},
+            {"67", "Conhecimento de Transporte Eletrônico para Outros Serviços - CT-e OS", #date(2017, 4, 1), #date(2017, 6, 30)},
+            {"67", "Conhecimento de Transporte Eletrônico para Outros Serviços - CT-e OS", #date(2017, 7, 1), null}
+        }
+    ),
+    Final = Fonte
+in
+    Final
