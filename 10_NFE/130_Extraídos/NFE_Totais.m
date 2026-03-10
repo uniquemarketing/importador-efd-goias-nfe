@@ -16,19 +16,6 @@ let
                 if chave44 <> null and chave44 <> "" then chave44 else chave,
         type text
     ),
-    SemDuplicadas = Table.Distinct(ChaveRef, {"Chave_Acesso_Ref"}),
-    RegrasTipo = List.Transform(
-        CamposBase & DerivadosBase,
-        each
-            {
-                if _[Alias]? <> null then _[Alias] else _[Name],
-                try fnParseKind(null, _[Kind], "type") otherwise type any
-            }
-    ),
-    TabelaTipada =
-        if List.IsEmpty(RegrasTipo) then
-            SemDuplicadas
-        else
-            Table.TransformColumnTypes(SemDuplicadas, RegrasTipo)
+    SemDuplicadas = Table.Distinct(ChaveRef, {"Chave_Acesso_Ref"})
 in
-    TabelaTipada
+    SemDuplicadas
